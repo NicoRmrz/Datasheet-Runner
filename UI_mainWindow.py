@@ -1,0 +1,98 @@
+# -*- coding: utf-8 -*-
+from PyQt5 import QtCore, QtGui, QtWidgets
+import os
+from PyQt5.QtGui import QPixmap, QIcon, QColor
+from PyQt5.QtWidgets import QStatusBar, QLabel, QHBoxLayout, QVBoxLayout, QWidget
+from PyQt5.QtCore import Qt, QPoint, QSize
+
+# User made files
+from GUI_Stylesheets import GUI_Stylesheets
+from logoButton import logoButton
+from dropScript import dropScript
+
+GUI_Style = GUI_Stylesheets()
+
+# Icon Image locations
+Main_path = os.getcwd() + "/"
+AppliedLogo = Main_path + "/icons/AppliedLogo.png"
+
+# Class: Ui_MainWindow
+# Parameters: 
+#   object - base class
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+
+        # Main WIndow attributes
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.resize(800, 480)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
+        MainWindow.setSizePolicy(sizePolicy)
+        MainWindow.setWindowIcon(QIcon(AppliedLogo))
+
+        # create main central widget
+        centralWidget = QtWidgets.QWidget(MainWindow)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(centralWidget.sizePolicy().hasHeightForWidth())
+        centralWidget.setSizePolicy(sizePolicy)
+        centralWidget.setTabletTracking(True)
+        centralWidget.setStyleSheet(GUI_Style.mainWindow)
+        centralWidget.setObjectName("centralWidget")
+
+        # ----------------------------------
+        # ------- Create Objects -----------
+        # ----------------------------------
+        # create logo button (my little secret)
+        self.Logo = logoButton(self, "")
+        self.Logo.setMaximumSize(150, 75)
+        self.Logo.setMinimumSize(125, 75)
+        self.Logo.setStyleSheet(GUI_Style.iconButton)
+        self.Logo.pressed.connect(self.Logo.On_Click)
+        self.Logo.released.connect(self.Logo.Un_Click)
+        self.Logo.setIcon(QIcon(AppliedLogo))
+        self.Logo.setIconSize(QSize(150, 75))
+
+        # create main title
+        titlename = QLabel(self)
+        titlename.setText("Protocol Data Entry")
+        titlename.setStyleSheet(GUI_Style.mainTitle)
+
+        # create drag and drop script window
+        self.dropWindow = dropScript(self)
+        self.dropWindow.setStyleSheet(GUI_Style.dropWindow)
+
+        # ----------------------------------
+        # ------- Layout Objects -----------
+        # ----------------------------------
+        # layout title
+        titleLayout = QHBoxLayout()
+        titleLayout.addWidget(self.Logo)
+        titleLayout.addWidget(titlename)
+
+        # Final layout
+        FinalLayout = QVBoxLayout()
+        FinalLayout.addLayout(titleLayout)
+        FinalLayout.addWidget(self.dropWindow)
+        FinalLayout.setSpacing(50)
+        FinalLayout.setContentsMargins(0, 10, 0, 0)
+
+        # set final layout
+        MainWindow.setCentralWidget(centralWidget)
+        centralWidget.setLayout(FinalLayout)
+        centralWidget.isWindow()
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        # ----------------------------------
+        # --------- StatusBar --------------
+        # ----------------------------------
+        self.statusBar = QStatusBar()
+        self.statusBar.setStyleSheet(GUI_Style.statusBarWhite)
+        self.statusBar.showMessage("Starting Up... ", 4000)
+        self.setStatusBar(self.statusBar)
+
+
+

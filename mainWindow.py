@@ -37,19 +37,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.Logo.clicked.connect(self.On_Click)
 
     @pyqtSlot()
+    # Function: sendStatusMessage
+    # 		Slot to send a status bar message
+    # Parameters: 
+    #   	message -  message to show on status bar
+    #   	time -  time for message to show
     def sendStatusMessage(self, message, time):
         self.statusBar.showMessage(message, time)
 
+    # Function: On_Click
+    # 		Slot to handle secret button click
     def On_Click(self):
         self.dropWindow = dropScript(self)
         self.FinalLayout.addWidget(self.dropWindow)
         # Connect signals to slots
         self.dropWindow.removeInstance.connect(self.removeDropWindow)
 
+    # Function: removeDropWindow
+    # 		Slot to handle removing the drag and drop window for the next phase
     def removeDropWindow(self):
         self.FinalLayout.removeWidget(self.dropWindow)
 
-    
     # ------------------------------------------------------------------
     # ----------- Close All Threads at app closure ---------------------
     # ------------------------------------------------------------------             

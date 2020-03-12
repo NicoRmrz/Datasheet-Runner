@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QMainWindow
 from GUI_Stylesheets import GUI_Stylesheets
 from UI_mainWindow import Ui_MainWindow
 from dropScript import dropScript
+from beginButton import beginButton
 
 GUI_Style = GUI_Stylesheets()
 
@@ -49,14 +50,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # 		Slot to handle secret button click
     def On_Click(self):
         self.dropWindow = dropScript(self)
-        self.FinalLayout.addWidget(self.dropWindow)
-        # Connect signals to slots
-        self.dropWindow.removeInstance.connect(self.removeDropWindow)
+        self.beginBtn = beginButton(self, "Begin", self.dropWindow)
 
-    # Function: removeDropWindow
-    # 		Slot to handle removing the drag and drop window for the next phase
-    def removeDropWindow(self):
+        self.FinalLayout.addWidget(self.dropWindow)
+        self.FinalLayout.addWidget(self.beginBtn)
+
+        # Connect signals to slots
+        self.beginBtn.removeInstance.connect(self.removePhaseOne)
+
+    # Function: removePhaseOne
+    # 		Slot to handle removingon first phase of drag and drog inpt JSON and change to the next phase
+    def removePhaseOne(self):
         self.FinalLayout.removeWidget(self.dropWindow)
+        self.FinalLayout.removeWidget(self.beginBtn)
 
     # ------------------------------------------------------------------
     # ----------- Close All Threads at app closure ---------------------

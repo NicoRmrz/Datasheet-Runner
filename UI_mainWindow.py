@@ -9,6 +9,7 @@ from PyQt5.QtCore import Qt, QPoint, QSize
 from GUI_Stylesheets import GUI_Stylesheets
 from logoButton import logoButton
 from dropScript import dropScript
+from beginButton import beginButton
 
 GUI_Style = GUI_Stylesheets()
 
@@ -63,7 +64,9 @@ class Ui_MainWindow(object):
 
         # create drag and drop script window
         self.dropWindow = dropScript(self)
-        self.dropWindow.setStyleSheet(GUI_Style.dropWindow)
+
+        # create begin button
+        self.beginBtn = beginButton(self, "Begin", self.dropWindow)
 
         # ----------------------------------
         # ------- Layout Objects -----------
@@ -77,6 +80,7 @@ class Ui_MainWindow(object):
         self.FinalLayout = QVBoxLayout()
         self.FinalLayout.addLayout(self.titleLayout)
         self.FinalLayout.addWidget(self.dropWindow)
+        self.FinalLayout.addWidget(self.beginBtn)
         self.FinalLayout.setSpacing(50)
         self.FinalLayout.setContentsMargins(0, 10, 0, 0)
 

@@ -11,7 +11,6 @@ class logoButton(QPushButton):
         super(logoButton, self).__init__()
         self.setText(text)
         self.setParent(window)
-
     
     # Function call for the click event
     def On_Click(self):

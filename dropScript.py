@@ -15,7 +15,6 @@ GUI_Style = GUI_Stylesheets()
 #   QListWidget - inherits QListWidget attributes
 class dropScript(QListWidget):
     scriptDropped = pyqtSignal(str)
-    removeInstance = pyqtSignal()
     scriptname = ""
 
     #initializes when class is called
@@ -73,10 +72,7 @@ class dropScript(QListWidget):
         with open('test/outdata.txt', 'w') as outfile:
             json.dump(DATASHEET_DICT, outfile)
 
-        # to remove widget
-        self.removeInstance.emit()
-        self.deleteLater()
-        self = None
+ 
 
 # Function: dragEnterEvent
 # 		Pre Defined Q List widget for drag event

@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QMainWindow
 #imports from user made file
 from GUI_Stylesheets import GUI_Stylesheets
 from UI_mainWindow import Ui_MainWindow
-from parserThread import parserThread
+from dropScript import dropScript
 
 GUI_Style = GUI_Stylesheets()
 
@@ -19,6 +19,8 @@ appVersion = "1.0"      # Update version
 # Icon Image locations
 Main_path = os.getcwd() + "/"
 AppliedLogo = Main_path + "/icons/AppliedLogo.png"
+
+DATASHEET_DICT = {}
 
 # Class: MainWindow
 # Parameters: 
@@ -31,31 +33,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("Protocol Data Entry v" + appVersion)
         self.setWindowIcon(QIcon(AppliedLogo))
 
-        # instantiate threads
-        self.parseThread = parserThread()
-
-
-        
-        
         # Connect signals to slots
-        self.dropWindow.scriptDropped.connect(self.receiveScript)
-
+        self.Logo.clicked.connect(self.On_Click)
 
     @pyqtSlot()
     def sendStatusMessage(self, message, time):
         self.statusBar.showMessage(message, time)
 
-    def receiveScript(self, script):
-        self.parseThread.setScriptToParse(script, True)
-        self.parseThread.start()
+    def On_Click(self):
+        self.dropWindow = dropScript(self)
+        self.FinalLayout.addWidget(self.dropWindow)
+        # Connect signals to slots
+        self.dropWindow.removeInstance.connect(self.removeDropWindow)
 
+    def removeDropWindow(self):
+        self.FinalLayout.removeWidget(self.dropWindow)
 
+    
     # ------------------------------------------------------------------
     # ----------- Close All Threads at app closure ---------------------
     # ------------------------------------------------------------------             
     # Stop all threads when GUI is closed
     def closeEvent(self, *args, **kwargs):
-        self.parseThread.terminate
-        self.parseThread.wait(100)        
-    
+        self.dropWindow.parseThread.terminate
+        self.dropWindow.parseThread.wait(100)        
         sys.exit(0);

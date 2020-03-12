@@ -1,31 +1,54 @@
 import os
 from PyQt5.QtGui import QImage
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QFile
+import json
 
-from scriptParser import scriptParser
-
-  # Class: parserThread
+# Class: parserThread
 #       Worker thread to handle all the parsing of the input scripts
 # Parameters: 
 #       QThread - inherits QThread attributes
 class parserThread(QThread):
-	inputScript = ""
-	parseState = False
-	success = False
+	sendOutput = pyqtSignal(str)
+	sendDict = pyqtSignal()
 
+	# Sets initial values
 	def __init__(self):
 		QThread.__init__(self)
-		self.parser = scriptParser()
+		self.inputScript = ""
+		self.parseState = False
+		self.datasheet_dict = {}
 
+# Function: setScriptToParse
+# 		Set worker thread to read in JSON 
+# Parameters: 
+#   	pathToFile - input file path
+#   	state - set state to start worker thread
 	def setScriptToParse(self, pathToFile, state):
 		self.inputScript = pathToFile
 		self.parseState = state
 		
+	# This function is started by.start() and runs the main portion of the code
 	def run(self):
 		self.setPriority(QThread.HighestPriority)
 
 		if self.parseState:
-		    success = self.parser.parseScriptFile(self.inputScript)
-		    parseState = False
-			
-					
+
+			try:								 
+				# Open Valid JSON script and store in dict
+				with open(self.inputScript, 'r') as f:
+					self.datasheet_dict = json.load(f)
+
+			except json.decoder.JSONDecodeError as e:
+				self.sendOutput.emit("Failed To Parse File")
+				self.sendOutput.emit(str(e))
+
+			finally:
+				if (len(self.datasheet_dict)!=0):
+					self.sendDict.emit()
+
+			self.parseState = False
+
+	# Get dictionary to mainWindow	
+	def getDict(self):
+		return self.datasheet_dict
+		

@@ -1,6 +1,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QObject
+import json
+
+# User made files
+from GUI_Stylesheets import GUI_Stylesheets
+from parserThread import parserThread
+
+GUI_Style = GUI_Stylesheets()
 
 # Class: dropScript
 #       Window to drag and drop input scripts
@@ -8,6 +15,7 @@ from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QObject
 #   QListWidget - inherits QListWidget attributes
 class dropScript(QListWidget):
     scriptDropped = pyqtSignal(str)
+    removeInstance = pyqtSignal()
     scriptname = ""
 
     #initializes when class is called
@@ -19,6 +27,48 @@ class dropScript(QListWidget):
         self.setDefaultDropAction(Qt.MoveAction)
         self.setWordWrap(True)
         self.setSelectionMode(QListWidget.SingleSelection)
+        self.setStyleSheet(GUI_Style.dropWindow)
+
+        # Instantiate parsr thread
+        self.parseThread = parserThread()
+
+        # Connect signals to slots
+        self.parseThread.sendDict.connect(self.receiveDict)
+        self.parseThread.sendOutput.connect(self.sendOutputWindow)
+        self.scriptDropped.connect(self.receiveScript)
+
+
+    def receiveScript(self, script):
+        self.parseThread.setScriptToParse(script, True)
+        self.parseThread.start()
+
+
+    def sendOutputWindow(self, message):
+        self.addItem(message)
+        self.scrollToBottom()
+
+
+
+    def receiveDict(self):
+        self.sendOutputWindow("Parsing Successful!")
+        DATASHEET_DICT = self.parseThread.getDict()
+
+        # print(DATASHEET_DICT[0]) #INDEX
+
+        for i in DATASHEET_DICT:	# add result to dict
+            i["Result"] = 4
+
+        # iterate items of dict
+        for distro in DATASHEET_DICT:
+            print(distro)
+
+        with open('test/outdata.txt', 'w') as outfile:
+            json.dump(DATASHEET_DICT, outfile)
+
+        # to remove widget
+        self.removeInstance.emit()
+        self.deleteLater()
+        self = None
 
     #Pre Defined Q List widget for drag event
     def dragEnterEvent(self, e):
@@ -47,7 +97,7 @@ class dropScript(QListWidget):
                 
             scriptEnding = self.scriptname.split(".")
 
-            if scriptEnding[1] =="txt":
+            if scriptEnding[1] =="json":
                  # Prints/ emit file path
                 self.addItem("Input Script: " + self.scriptname)
                 self.scrollToBottom()

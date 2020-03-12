@@ -58,7 +58,7 @@ class Ui_MainWindow(object):
 
         # create main title
         titlename = QLabel(self)
-        titlename.setText("Protocol Data Entry")
+        titlename.setText("Datasheet Runner")
         titlename.setStyleSheet(GUI_Style.mainTitle)
 
         # create drag and drop script window
@@ -69,20 +69,20 @@ class Ui_MainWindow(object):
         # ------- Layout Objects -----------
         # ----------------------------------
         # layout title
-        titleLayout = QHBoxLayout()
-        titleLayout.addWidget(self.Logo)
-        titleLayout.addWidget(titlename)
+        self.titleLayout = QHBoxLayout()
+        self.titleLayout.addWidget(self.Logo)
+        self.titleLayout.addWidget(titlename)
 
         # Final layout
-        FinalLayout = QVBoxLayout()
-        FinalLayout.addLayout(titleLayout)
-        FinalLayout.addWidget(self.dropWindow)
-        FinalLayout.setSpacing(50)
-        FinalLayout.setContentsMargins(0, 10, 0, 0)
+        self.FinalLayout = QVBoxLayout()
+        self.FinalLayout.addLayout(self.titleLayout)
+        self.FinalLayout.addWidget(self.dropWindow)
+        self.FinalLayout.setSpacing(50)
+        self.FinalLayout.setContentsMargins(0, 10, 0, 0)
 
         # set final layout
         MainWindow.setCentralWidget(centralWidget)
-        centralWidget.setLayout(FinalLayout)
+        centralWidget.setLayout(self.FinalLayout)
         centralWidget.isWindow()
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 

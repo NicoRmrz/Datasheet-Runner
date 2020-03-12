@@ -17,12 +17,13 @@ class parserThread(QThread):
 		self.inputScript = ""
 		self.parseState = False
 		self.datasheet_dict = {}
+		self.success = False
 
-# Function: setScriptToParse
-# 		Set worker thread to read in JSON file
-# Parameters: 
-#   	pathToFile - input file path
-#   	state - set state to start worker thread
+	# Function: setScriptToParse
+	# 		Set worker thread to read in JSON file
+	# Parameters: 
+	#   	pathToFile - input file path
+	#   	state - set state to start worker thread
 	def setScriptToParse(self, pathToFile, state):
 		self.inputScript = pathToFile
 		self.parseState = state
@@ -32,6 +33,7 @@ class parserThread(QThread):
 		self.setPriority(QThread.HighestPriority)
 
 		if self.parseState:
+			self.datasheet_dict.clear()
 			try:								 
 				# Open Valid JSON script and store in dict
 				with open(self.inputScript, 'r') as f:
@@ -39,14 +41,17 @@ class parserThread(QThread):
 
 			#Send errors if any
 			except json.decoder.JSONDecodeError as e:
+				self.success = False
 				self.sendOutput.emit("Failed To Parse File")
 				self.sendOutput.emit(str(e))
 
 			# send mainWindow Dict is ready
 			finally:
-				if (len(self.datasheet_dict)!=0):
+				print(len(self.datasheet_dict))
+				if (len(self.datasheet_dict) > 0):
+					self.success = True
 					self.sendDict.emit()
-
+					
 			self.parseState = False
 
 # Function: getDict
@@ -55,4 +60,3 @@ class parserThread(QThread):
 #   	python dictionary of input JSON file
 	def getDict(self):
 		return self.datasheet_dict
-		

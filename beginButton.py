@@ -17,11 +17,20 @@ class beginButton(QPushButton):
         self.setParent(window)
         self.setMaximumSize(150, 50)
         self.setMinimumSize(125, 50)
+        self.setEnabled(False)
         self.dropWindow = dropWindow
-
+        
         # Connect signals to slots
         self.pressed.connect(self.On_Click)
         self.released.connect(self.Un_Click)
+        self.dropWindow.enableBtn.connect(self.setEnable)
+
+   # Function: setEnable
+    # 		Set button enable state
+	# Parameters: 
+	#   	state - button enable status
+    def setEnable(self, state):
+        self.setEnabled(state)
 
    # Function: On_Click
     # 		Slot to handle button click

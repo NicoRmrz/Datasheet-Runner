@@ -9,13 +9,18 @@ from parserThread import parserThread
 
 GUI_Style = GUI_Stylesheets()
 
+DATASHEET_DICT = {}
+
 # Class: dropScript
 #       Window to drag and drop input scripts
 # Parameters: 
 #   QListWidget - inherits QListWidget attributes
 class dropScript(QListWidget):
     scriptDropped = pyqtSignal(str)
+    enableBtn = pyqtSignal(bool)
     scriptname = ""
+    scriptReady = False
+    success = False
 
     #initializes when class is called
     def __init__(self, parent):
@@ -51,6 +56,7 @@ class dropScript(QListWidget):
     def sendOutputWindow(self, message):
         self.addItem(message)
         self.scrollToBottom()
+        self.enableBtn.emit(self.parseThread.success)
 
 # Function: getScriptDict
 # 		Parse JSON file and return with dict of contents
@@ -58,21 +64,21 @@ class dropScript(QListWidget):
         self.sendOutputWindow("Parsing Successful!")
         DATASHEET_DICT = self.parseThread.getDict()
 
+        self.enableBtn.emit(True)
+        
         # print(DATASHEET_DICT[0]) #INDEX
 
-        # add result to dict
-        for i in DATASHEET_DICT:	
-            i["Result"] = 4
+        # # add result to dict
+        # for i in DATASHEET_DICT:	
+        #     i["Result"] = 4
 
-        # iterate items of dict
-        for distro in DATASHEET_DICT:
-            print(distro)
+        # # iterate items of dict
+        # for distro in DATASHEET_DICT:
+        #     print(distro)
 
-        #save JSON
-        with open('test/outdata.txt', 'w') as outfile:
-            json.dump(DATASHEET_DICT, outfile)
-
- 
+        # #save JSON
+        # with open('test/outdata.txt', 'w') as outfile:
+        #     json.dump(DATASHEET_DICT, outfile)
 
 # Function: dragEnterEvent
 # 		Pre Defined Q List widget for drag event
@@ -102,6 +108,8 @@ class dropScript(QListWidget):
 
         # If drag drop window has url window accepts
         if e.mimeData().hasUrls:
+            self.clear()
+
             e.setDropAction(Qt.CopyAction)
 
              # get scriptname
@@ -119,7 +127,7 @@ class dropScript(QListWidget):
             else:
                 self.addItem("Invalid Script with extension (" + scriptEnding[1] +")")
                 self.scrollToBottom()
-
+                self.enableBtn.emit(False)
             e.accept()
         else:
             e.ignore()

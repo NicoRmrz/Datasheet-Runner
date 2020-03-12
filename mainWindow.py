@@ -21,7 +21,6 @@ appVersion = "1.0"      # Update version
 Main_path = os.getcwd() + "/"
 AppliedLogo = Main_path + "/icons/AppliedLogo.png"
 
-DATASHEET_DICT = {}
 
 # Class: MainWindow
 # Parameters: 

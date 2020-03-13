@@ -1,51 +1,65 @@
 [
 	{
-		"Name": "Debian",
-		"Version": "9",
-		"Install": "apt",
-		"Owner": "SPI",
-		"Kernel": "4.9"
+		"Section": "8.1",
+		"Test": "this is nnumba 1",
+		"Type": "bool",			
+		"Min": "",
+		"Max": "",
+		"Unit": "V",
+		"Comment": ""
 	},
 	{
-		"Name": "Ubuntu",
-		"Version": "17.10",
-		"Install": "apt",
-		"Owner": "Canonical",
-		"Kernel": "4.13"
+		"Section": "8.2",
+		"Test": "this is nnumba 2",
+		"Type": "numeric",			
+		"Min": "6",
+		"Max": "11.9",
+		"Unit": "oHM",
+		"Comment": ""
 	},
 	{
-		"Name": "Fedora",
-		"Version": "26",
-		"Install": "dnf",
-		"Owner": "Red Hat",
-		"Kernel": "4.13"
+		"Section": "8.3",
+		"Test": "this is nnumba 3",
+		"Type": "bool",			
+		"Min": "41",
+		"Max": "51.6",
+		"Unit": "V",
+		"Comment": ""
 	},
 	{
-		"Name": "CentOS",
-		"Version": "7",
-		"Install": "yum",
-		"Owner": "Red Hat",
-		"Kernel": "3.10"
+		"Section": "8.3",
+		"Test": "this is 4",
+		"Type": "bool",			
+		"Min": "122",
+		"Max": "124.912",
+		"Unit": "V",
+		"Comment": ""
 	},
 	{
-		"Name": "OpenSUSE",
-		"Version": "42.3",
-		"Install": "zypper",
-		"Owner": "Novell",
-		"Kernel": "4.4"
+		"Section": "8.4",
+		"Test": "this is 5",
+		"Type": "bool",			
+		"Min": "24",
+		"Max": "24.9",
+		"Unit": "V",
+		"Comment": ""
 	},
 	{
-		"Name": "Arch Linux",
-		"Version": "Rolling Release",
-		"Install": "pacman",
-		"Owner": "SPI",
-		"Kernel": "4.13"
+		"Section": "8.5",
+		"Test": "thiswdwd wd w",
+		"Type": "bool",			
+		"Min": "54",
+		"Max": "54.9",
+		"Unit": "mV",
+		"Comment": ""
 	},
 	{
-		"Name": "Gentoo",
-		"Version": "Rolling Release",
-		"Install": "emerge",
-		"Owner": "Gentoo Foundation",
-		"Kernel": "4.12"
+		"Section": "8.6",
+		"Test": "this is nnumba 88",
+		"Type": "bool",			
+		"Min": "4",
+		"Max": "4.9",
+		"Unit": "V",
+		"Comment": ""
 	}
 ]

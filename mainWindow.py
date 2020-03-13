@@ -109,6 +109,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Update each UI entry with input dict
         self.updateTestGUI()
 
+        # populate test outline QlistWidget
+        for i in self.DATASHEET_DICT:
+            print(i.get('Section'))
+            self.testPhaseUI.testOutline.addItem(i.get('Section'))
+
     # Function: getScriptDict
     # 		Parse JSON file and return with dict of contents
     def getScriptDict(self):

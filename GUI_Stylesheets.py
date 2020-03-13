@@ -12,16 +12,14 @@ class GUI_Stylesheets(QObject):
         
         self.mainTitle =    ("font: bold 30px Verdana; "
                             "color: white; "
-                            "background-color: rgba(18,151,147,0)"
-                            )
+                            "background-color: rgba(18,151,147,0)")
         
         self.statusBarWhite = ("QStatusBar { background: #20292F;"
                                         "color:white;} "
                                         "font: 20 px Verdana;  "
                             "QStatusBar::item {border: 1px solid #313335; "
                                 "font: 20 px Verdana;  "
-                                "border-radius: 3px; }"
-                            )
+                                "border-radius: 3px; }" )
         
         self.statusBarRed = ("QStatusBar {color:red;} ")
                             
@@ -29,8 +27,7 @@ class GUI_Stylesheets(QObject):
                             "background-color: qlineargradient(spread:pad x1:0.45, y1:0.3695, x2:0.427, y2:0, "
                                 "stop:0 rgba(242, 242, 242, 0), "
                                 "stop:1 rgba(255,255,255,0)); "
-                                "border: none; "
-                            )
+                                "border: none; ")
                             
         self.dropWindow = ("font: 14px Verdana ; "
                             "color: white; "
@@ -106,3 +103,19 @@ class GUI_Stylesheets(QObject):
                             "color: white; "
                             "border: none;"
                              "background-color: rgba(0,0,0,0) ")
+                            
+        self.outlineList = ("QListWidget {"
+                            "font: 18px Verdana; "
+                            "color: white;}"
+                            "QListWidget::item {"
+                                "border-style: solid; "
+                                "border-width: 4px; "
+                                "padding: 5px; "
+                                "border-color: black; "
+                    "border-left-color:  none; "
+                    "border-top-color:  none; "
+                    "border-right-color:  none;}"
+
+                            "QListWidget::item:selected {"
+                                    "color: black;"
+                                "background-color: #add8e6;}")

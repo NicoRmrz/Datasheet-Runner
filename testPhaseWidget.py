@@ -1,6 +1,6 @@
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QPushButton, QLineEdit, QLabel, QTextEdit, QAbstractScrollArea,  QGroupBox, QWidget, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QPushButton, QLineEdit, QLabel, QTextEdit, QAbstractItemView,  QListWidget, QWidget, QHBoxLayout, QVBoxLayout
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QObject, QSize
 from PyQt5.QtGui import QPixmap, QIcon
 
@@ -17,7 +17,7 @@ prevIdle = Main_path + "/icons/previousIdle.png"
 # Class: testPhaseWidget
 #       Create widget and layout for testing phase
 # Parameters: 
-#   QListWidget - inherits QWidget attributes
+#       QWidget - inherits QWidget attributes
 class testPhaseWidget(QWidget):
 
     #initializes when class is called
@@ -179,6 +179,15 @@ class testPhaseWidget(QWidget):
         self.passFailInput.setStyleSheet(GUI_Style.passFail)
         self.passFailInput.setFocusPolicy(Qt.StrongFocus)
 
+        # Create test outlone list widget
+        self.testOutline = QListWidget(self)
+        self.testOutline.setAcceptDrops(False)
+        self.testOutline.setWordWrap(True)
+        self.testOutline.setStyleSheet(GUI_Style.outlineList)
+        self.testOutline.setDragDropMode(QAbstractItemView.NoDragDrop)
+        self.testOutline.setDragEnabled(False)
+        self.testOutline.setMaximumWidth(100)
+
         # Layout Widget
         # first align each label to input box
         minLay = QVBoxLayout()
@@ -247,11 +256,22 @@ class testPhaseWidget(QWidget):
         commentLay.addWidget(self.comment)
         commentLay.setSpacing(5)
 
-        # final layout
+        # final vert layout
+        finalVertLayout = QVBoxLayout()
+        finalVertLayout.addLayout(testSectionLay)
+        finalVertLayout.addLayout(labelLayout)
+        finalVertLayout.addLayout(commentLay)
+        finalVertLayout.setSpacing(30)
+
+        # final horizontal layout
+        finalHorLayout = QHBoxLayout()
+        finalHorLayout.addLayout(finalVertLayout)
+        finalHorLayout.addWidget(self.testOutline)
+        finalHorLayout.setSpacing(20)
+
+        # final  layout
         finalLayout = QVBoxLayout()
-        finalLayout.addLayout(testSectionLay)
-        finalLayout.addLayout(labelLayout)
-        finalLayout.addLayout(commentLay)
+        finalLayout.addLayout(finalHorLayout)
         finalLayout.addLayout(testIterateBtnLay)
         finalLayout.setSpacing(30)
 

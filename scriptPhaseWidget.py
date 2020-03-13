@@ -11,7 +11,7 @@ GUI_Style = GUI_Stylesheets()
 # Class: scriptPhaseWidget
 #       Create widget and layout for testing phase
 # Parameters: 
-#   QListWidget - inherits QWidget attributes
+#   QWidget - inherits QWidget attributes
 class scriptPhaseWidget(QWidget):
     removeInstance = pyqtSignal()
 

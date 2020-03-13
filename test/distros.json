@@ -6,7 +6,7 @@
 		"Min": "",
 		"Max": "",
 		"Unit": "V",
-		"Comment": ""
+		"Comment": "do this"
 	},
 	{
 		"Section": "8.2",
@@ -15,7 +15,7 @@
 		"Min": "6",
 		"Max": "11.9",
 		"Unit": "oHM",
-		"Comment": ""
+		"Comment": "not this"
 	},
 	{
 		"Section": "8.3",
@@ -24,7 +24,7 @@
 		"Min": "41",
 		"Max": "51.6",
 		"Unit": "V",
-		"Comment": ""
+		"Comment": "and ONE"
 	},
 	{
 		"Section": "8.3",
@@ -42,7 +42,7 @@
 		"Min": "24",
 		"Max": "24.9",
 		"Unit": "V",
-		"Comment": ""
+		"Comment": "empty before this"
 	},
 	{
 		"Section": "8.5",

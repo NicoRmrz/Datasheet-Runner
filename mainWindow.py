@@ -51,6 +51,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # Function: updateTestGUI
     # 		Function to populate UI objects with first index of input dict
     def updateTestGUI(self):
+        #Save previous data
+        self.saveData()
+
+        # set current Test outline row
+        self.testPhaseUI.testOutline.setCurrentRow(self.INDEX)
+
         # index test
         self.current_Dict = self.DATASHEET_DICT[self.INDEX]
 
@@ -60,19 +66,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.testPhaseUI.minInput.setText(self.current_Dict.get('Min'))        # Min
         self.testPhaseUI.maxInput.setText(self.current_Dict.get('Max'))        # Max
         self.testPhaseUI.unitInput.setText(self.current_Dict.get('Unit'))      # Unit
+        self.testPhaseUI.comment.setText(self.current_Dict.get('Comment'))     # Comment
+        self.testPhaseUI.valueInput.setText(self.current_Dict.get('Value'))    # Value
+        self.testPhaseUI.passFailInput.setText(self.current_Dict.get('Result')) # Pass/ Fail 
 
-        # Comment/ Notes
-        if (self.current_Dict.get('Comment') != ""):
-            self.testPhaseUI.comment.setText(self.current_Dict.get('Comment'))
-
-        # Input Value
-        if (self.current_Dict.get('Value') != ""):
-            self.testPhaseUI.valueInput.setText(self.current_Dict.get('Value'))
-
-        # Pass/ Fails Result
-        if (self.current_Dict.get('Result') != ""):
-            self.testPhaseUI.passFailInput.setText(self.current_Dict.get('Result'))
-
+    # -------------------------------------------------
+    # --------------- SLOT Functions ------------------
+    # ------------------------------------------------- 
     @pyqtSlot()
     # Function: sendStatusMessage
     # 		Slot to send a status bar message
@@ -105,14 +105,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.testPhaseUI.prevButton.released.connect(self.prevReleased)
         self.testPhaseUI.nextButton.pressed.connect(self.nextPressed)
         self.testPhaseUI.nextButton.released.connect(self.nextReleased)
+        self.testPhaseUI.testOutline.itemClicked.connect(self.testClicked)
 
         # Update each UI entry with input dict
         self.updateTestGUI()
 
         # populate test outline QlistWidget
         for i in self.DATASHEET_DICT:
-            print(i.get('Section'))
             self.testPhaseUI.testOutline.addItem(i.get('Section'))
+            # self.testPhaseUI.testOutline.data(Qt.UserRole)
 
     # Function: getScriptDict
     # 		Parse JSON file and return with dict of contents
@@ -172,9 +173,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def saveReleased(self):
         self.testPhaseUI.saveButton.setStyleSheet(GUI_Style.buttonIdle)
 
-        print(self.testPhaseUI.comment.toPlainText())
+        self.saveData()
         
-        # add result to dict
+    def saveData (self):
+        # add input data to dict
         self.current_Dict["Value"] = self.testPhaseUI.valueInput.text()
         self.current_Dict["Result"] = self.testPhaseUI.passFailInput.text()
         self.current_Dict["Comment"] = self.testPhaseUI.comment.toPlainText()
@@ -218,6 +220,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.INDEX = self.INDEX + 1
         else:
             self.sendStatusMessage("At the Final Test", 1000)
+
+        # Update each UI entry with input dict
+        self.updateTestGUI()
+
+    # ------------------------------------------------------------------
+    # ------------------  Test Outline Clicked -------------------------
+    # ------------------------------------------------------------------ 
+    # Function: testClicked
+    # 		Slot to handle item click in QListWidget
+    def testClicked(self, item):
+        self.INDEX = self.testPhaseUI.testOutline.row(item)
 
         # Update each UI entry with input dict
         self.updateTestGUI()

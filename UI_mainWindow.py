@@ -23,7 +23,7 @@ class Ui_MainWindow(object):
 
         # Main WIndow attributes
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 480)
+        MainWindow.resize(850, 480)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -53,7 +53,6 @@ class Ui_MainWindow(object):
         self.Logo.setStyleSheet(GUI_Style.iconButton)
         self.Logo.setIcon(QIcon(AppliedLogo))
         self.Logo.setIconSize(QSize(150, 75))
-        self.Logo.setFocusPolicy(Qt.NoFocus)
 
         # create main title
         titlename = QLabel(self)

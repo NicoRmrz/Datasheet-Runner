@@ -59,14 +59,14 @@ class testPhaseWidget(QWidget):
         # Create section field
         self.section = QLineEdit(self)
         self.section.setReadOnly(True)
-        self.section.setText("Section: ")
+        self.section.setText("")
         self.section.setMinimumWidth(75)
         self.section.setStyleSheet(GUI_Style.section)
 
         # Create Test field
         self.test = QTextEdit(self)
         self.test.setReadOnly(True)
-        self.test.setText("Test: ")
+        self.test.setText("")
         self.test.setMaximumHeight(75)
         self.test.setStyleSheet(GUI_Style.testWindow)
 
@@ -90,26 +90,31 @@ class testPhaseWidget(QWidget):
         minLabel = QLabel(self)
         minLabel.setText("Min")
         minLabel.setStyleSheet(GUI_Style.label)
+        minLabel.setAlignment(Qt.AlignCenter)
 
         # Create max label
         maxLabel = QLabel(self)
         maxLabel.setText("Max")
         maxLabel.setStyleSheet(GUI_Style.label)
+        maxLabel.setAlignment(Qt.AlignCenter)
 
         # Create unit label
         unitLabel = QLabel(self)
         unitLabel.setText("Unit")
         unitLabel.setStyleSheet(GUI_Style.label)
+        unitLabel.setAlignment(Qt.AlignCenter)
 
         # Create Value label
         valueLabel = QLabel(self)
         valueLabel.setText("Value")
         valueLabel.setStyleSheet(GUI_Style.label)
+        valueLabel.setAlignment(Qt.AlignCenter)
 
         # Create pass/fail label
         passFailLabel = QLabel(self)
         passFailLabel.setText("P/F")
         passFailLabel.setStyleSheet(GUI_Style.label)
+        passFailLabel.setAlignment(Qt.AlignCenter)
 
         # Create Comments label
         commentsLabel = QLabel(self)
@@ -122,7 +127,7 @@ class testPhaseWidget(QWidget):
         self.minInput.setReadOnly(True)
         self.minInput.setAlignment(Qt.AlignCenter)
         self.minInput.setMinimumSize(50,50)
-        self.minInput.setMaximumSize(50,50)
+        self.minInput.setMaximumSize(60,50)
         self.minInput.setStyleSheet(GUI_Style.inputBoxNonEdit)
 
         # Create max field
@@ -130,13 +135,13 @@ class testPhaseWidget(QWidget):
         self.maxInput.setText("maxxia")
         self.maxInput.setReadOnly(True)
         self.maxInput.setAlignment(Qt.AlignCenter)
-        self.maxInput.setMinimumSize(50,50)
-        self.maxInput.setMaximumSize(50,50)        
+        self.maxInput.setMinimumSize(75,50)
+        self.maxInput.setMaximumSize(75,50)        
         self.maxInput.setStyleSheet(GUI_Style.inputBoxNonEdit)
 
         # Create unit field
         self.unitInput = QLineEdit(self)
-        self.unitInput.setText("mV")
+        self.unitInput.setText("")
         self.unitInput.setReadOnly(True)
         self.unitInput.setAlignment(Qt.AlignCenter)
         self.unitInput.setMinimumSize(50,50)

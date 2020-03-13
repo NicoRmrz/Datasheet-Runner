@@ -3,30 +3,41 @@ import sys
 import os
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QObject
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QObject, QSize
 from PyQt5.QtWidgets import QMainWindow
+import json
+import sip
 
 #imports from user made file
 from GUI_Stylesheets import GUI_Stylesheets
 from UI_mainWindow import Ui_MainWindow
-from dropScript import dropScript
-from beginButton import beginButton
+from testPhaseWidget import testPhaseWidget
+from scriptPhaseWidget import scriptPhaseWidget
 
 GUI_Style = GUI_Stylesheets()
 
 # Current version of application - Update for new builds
 appVersion = "1.0"      # Update version
+DATASHEET_DICT = {}
 
 # Icon Image locations
 Main_path = os.getcwd() + "/"
 AppliedLogo = Main_path + "/icons/AppliedLogo.png"
-
+nextIdle = Main_path + "/icons/nextIdle.png"
+nextPressed = Main_path + "/icons/nextPressed.png"
+prevIdle = Main_path + "/icons/previousIdle.png"
+prevPressed = Main_path + "/icons/prevPressed.png"
 
 # Class: MainWindow
 # Parameters: 
 #   QMainWindow - inherits QMainWindow attributes
-#   Ui_MainWindow - all objects made from UI_Mainwindow are brought to the MainWindow class
+#   Ui_MainWindow - all objects made from UI_Mainwindow are 
+# #                 brought to the MainWindow class
 class MainWindow(QMainWindow, Ui_MainWindow):
+    DATASHEET_DICT = {}
+    current_Dict = {}
+    INDEX = 0   # dictionary index
+
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
@@ -34,7 +45,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowIcon(QIcon(AppliedLogo))
 
         # Connect signals to slots
-        self.Logo.clicked.connect(self.On_Click)
+        self.scriptPhaseUI.dropWindow.parseThread.sendDict.connect(self.getScriptDict)
+        self.scriptPhaseUI.removeInstance.connect(self.testingPhase)
+
+    # Function: updateTestGUI
+    # 		Function to populate UI objects with first index of input dict
+    def updateTestGUI(self):
+        # index test
+        self.current_Dict = self.DATASHEET_DICT[self.INDEX]
+
+        # populate objects
+        self.testPhaseUI.section.setText(self.current_Dict.get('Section'))     # Section
+        self.testPhaseUI.test.setText(self.current_Dict.get('Test'))           # Test Name
+        self.testPhaseUI.minInput.setText(self.current_Dict.get('Min'))        # Min
+        self.testPhaseUI.maxInput.setText(self.current_Dict.get('Max'))        # Max
+        self.testPhaseUI.unitInput.setText(self.current_Dict.get('Unit'))      # Unit
+
+        # Comment/ Notes
+        if (self.current_Dict.get('Comment') != ""):
+            self.testPhaseUI.comment.setText(self.current_Dict.get('Comment'))
+
+        # Input Value
+        if (self.current_Dict.get('Value') != ""):
+            self.testPhaseUI.valueInput.setText(self.current_Dict.get('Value'))
+
+        # Pass/ Fails Result
+        if (self.current_Dict.get('Result') != ""):
+            self.testPhaseUI.passFailInput.setText(self.current_Dict.get('Result'))
 
     @pyqtSlot()
     # Function: sendStatusMessage
@@ -45,29 +82,147 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def sendStatusMessage(self, message, time):
         self.statusBar.showMessage(message, time)
 
-    # Function: On_Click
-    # 		Slot to handle secret button click
-    def On_Click(self):
-        self.dropWindow = dropScript(self)
-        self.beginBtn = beginButton(self, "Begin", self.dropWindow)
+    # Function: testingPhase
+    # 		Slot to handle removing objects on first script parsing phase 
+    #       and adding UI objecs to next testing phase
+    def testingPhase(self):
+        # remove object from first phase
+        self.FinalLayout.removeWidget(self.scriptPhaseUI)
+        sip.delete(self.scriptPhaseUI)
+        self.scriptPhaseUI = None
 
-        self.FinalLayout.addWidget(self.dropWindow)
-        self.FinalLayout.addWidget(self.beginBtn)
+        # set up new UI for next phase
+        self.testPhaseUI = testPhaseWidget(self)
+        self.FinalLayout.addWidget(self.testPhaseUI)
+        self.titleLayout.addLayout(self.testPhaseUI.saveResetLay)
 
         # Connect signals to slots
-        self.beginBtn.removeInstance.connect(self.removePhaseOne)
+        self.testPhaseUI.resetButton.pressed.connect(self.resetPressed)
+        self.testPhaseUI.resetButton.released.connect(self.resetToScriptPhase)
+        self.testPhaseUI.saveButton.pressed.connect(self.savepressed)
+        self.testPhaseUI.saveButton.released.connect(self.saveReleased)
+        self.testPhaseUI.prevButton.pressed.connect(self.prevPressed)
+        self.testPhaseUI.prevButton.released.connect(self.prevReleased)
+        self.testPhaseUI.nextButton.pressed.connect(self.nextPressed)
+        self.testPhaseUI.nextButton.released.connect(self.nextReleased)
 
-    # Function: removePhaseOne
-    # 		Slot to handle removingon first phase of drag and drog inpt JSON and change to the next phase
-    def removePhaseOne(self):
-        self.FinalLayout.removeWidget(self.dropWindow)
-        self.FinalLayout.removeWidget(self.beginBtn)
+        # Update each UI entry with input dict
+        self.updateTestGUI()
+
+    # Function: getScriptDict
+    # 		Parse JSON file and return with dict of contents
+    def getScriptDict(self):
+        self.scriptPhaseUI.dropWindow.sendOutputWindow("Parsing Successful!")
+        self.scriptPhaseUI.buttonEnable(True)
+
+        # get dictionaty from JSON file
+        self.DATASHEET_DICT = self.scriptPhaseUI.dropWindow.parseThread.getDict()
+
+    # ------------------------------------------------------------------
+    # ---------------------- Reset Session -----------------------------
+    # ------------------------------------------------------------------ 
+    # Function: resetPressed
+    # 		Slot to handle reseting button pressed
+    def resetPressed(self):
+        self.testPhaseUI.resetButton.setStyleSheet(GUI_Style.buttonPressed)
+
+    # Function: resetToScriptPhase
+    # 		Slot to handle reseting to first input script phase
+    def resetToScriptPhase(self):
+        #reset button 
+        self.testPhaseUI.resetButton.setStyleSheet(GUI_Style.resetButtonIdle)
+
+        # reset dict index
+        self.INDEX = 0
+
+        # remove objects from second phase
+        self.testPhaseUI.saveResetLay.removeWidget(self.testPhaseUI.saveButton)
+        self.testPhaseUI.saveResetLay.removeWidget(self.testPhaseUI.resetButton)
+        self.FinalLayout.removeWidget(self.testPhaseUI)
+        sip.delete(self.testPhaseUI.saveButton)
+        sip.delete(self.testPhaseUI.resetButton)
+        sip.delete(self.testPhaseUI)
+        self.testPhaseUI.saveButton = None
+        self.testPhaseUI.resetButton = None
+        self.testPhaseUI = None
+   
+        # Set up UI objects to first phase
+        self.scriptPhaseUI = scriptPhaseWidget(self)
+        self.FinalLayout.addWidget(self.scriptPhaseUI)
+
+        # Connect signals to slots
+        self.scriptPhaseUI.removeInstance.connect(self.testingPhase)
+        self.scriptPhaseUI.dropWindow.parseThread.sendDict.connect(self.getScriptDict)
+
+    # ------------------------------------------------------------------
+    # ---------------------- Save Session ------------------------------
+    # ------------------------------------------------------------------  
+    # Function: savepressed
+    # 		Slot to handle save button pressed
+    def savepressed(self):
+        self.testPhaseUI.saveButton.setStyleSheet(GUI_Style.buttonPressed)
+
+    # Function: saveReleased
+    # 		Slot to handle save button released
+    def saveReleased(self):
+        self.testPhaseUI.saveButton.setStyleSheet(GUI_Style.buttonIdle)
+
+        print(self.testPhaseUI.comment.toPlainText())
+        
+        # add result to dict
+        self.current_Dict["Value"] = self.testPhaseUI.valueInput.text()
+        self.current_Dict["Result"] = self.testPhaseUI.passFailInput.text()
+        self.current_Dict["Comment"] = self.testPhaseUI.comment.toPlainText()
+
+      #save JSON
+        with open('test/outData.json', 'w') as outfile:
+            json.dump(self.DATASHEET_DICT, outfile)
+
+    # ------------------------------------------------------------------
+    # ---------------------- Previous Test -----------------------------
+    # ------------------------------------------------------------------ 
+    # Function: prevPressed
+    # 		Slot to handle previous button pressed
+    def prevPressed(self):
+        self.testPhaseUI.prevButton.setIcon(QIcon(prevPressed))
+
+    # Function: prevReleased
+    # 		Slot to handle previous button released
+    def prevReleased(self):
+        self.testPhaseUI.prevButton.setIcon(QIcon(prevIdle))
+        if (self.INDEX != 0):
+            self.INDEX = self.INDEX - 1
+        else:
+            self.sendStatusMessage("Cannot go back anymore tests", 1000)
+
+        # Update each UI entry with input dict
+        self.updateTestGUI()
+    # ------------------------------------------------------------------
+    # ---------------------- Next Test ---------------------------------
+    # ------------------------------------------------------------------ 
+    # Function: nextPressed
+    # 		Slot to handle next button pressed
+    def nextPressed(self):
+        self.testPhaseUI.nextButton.setIcon(QIcon(nextPressed))
+
+    # Function: nextReleased
+    # 		Slot to handle next button released
+    def nextReleased(self):
+        self.testPhaseUI.nextButton.setIcon(QIcon(nextIdle))
+        if (self.INDEX < len(self.DATASHEET_DICT)-1):
+            self.INDEX = self.INDEX + 1
+        else:
+            self.sendStatusMessage("At the Final Test", 1000)
+
+        # Update each UI entry with input dict
+        self.updateTestGUI()
 
     # ------------------------------------------------------------------
     # ----------- Close All Threads at app closure ---------------------
     # ------------------------------------------------------------------             
     # Stop all threads when GUI is closed
     def closeEvent(self, *args, **kwargs):
-        self.dropWindow.parseThread.terminate
-        self.dropWindow.parseThread.wait(100)        
-        sys.exit(0);
+        if(self.scriptPhaseUI != None):
+            self.scriptPhaseUI.dropWindow.parseThread.terminate
+            self.scriptPhaseUI.dropWindow.parseThread.wait(100)        
+        sys.exit(0)

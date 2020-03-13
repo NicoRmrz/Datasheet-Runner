@@ -47,7 +47,6 @@ class parserThread(QThread):
 
 			# send mainWindow Dict is ready
 			finally:
-				print(len(self.datasheet_dict))
 				if (len(self.datasheet_dict) > 0):
 					self.success = True
 					self.sendDict.emit()

@@ -1,7 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QObject
-import json
 
 # User made files
 from GUI_Stylesheets import GUI_Stylesheets
@@ -9,14 +8,12 @@ from parserThread import parserThread
 
 GUI_Style = GUI_Stylesheets()
 
-DATASHEET_DICT = {}
 
 # Class: dropScript
 #       Window to drag and drop input scripts
 # Parameters: 
 #   QListWidget - inherits QListWidget attributes
 class dropScript(QListWidget):
-    scriptDropped = pyqtSignal(str)
     enableBtn = pyqtSignal(bool)
     scriptname = ""
     scriptReady = False
@@ -38,16 +35,6 @@ class dropScript(QListWidget):
 
         # Connect signals to slots
         self.parseThread.sendOutput.connect(self.sendOutputWindow)
-        self.scriptDropped.connect(self.receiveScript)
-        self.parseThread.sendDict.connect(self.getScriptDict)
-
-# Function: receiveScript
-# 		Get script path from drag and drop window
-# Parameters: 
-#   	script - input file path
-    def receiveScript(self, script):
-        self.parseThread.setScriptToParse(script, True)
-        self.parseThread.start()
 
 # Function: sendOutputWindow
 # 		Output message to drag and drop window
@@ -57,28 +44,6 @@ class dropScript(QListWidget):
         self.addItem(message)
         self.scrollToBottom()
         self.enableBtn.emit(self.parseThread.success)
-
-# Function: getScriptDict
-# 		Parse JSON file and return with dict of contents
-    def getScriptDict(self):
-        self.sendOutputWindow("Parsing Successful!")
-        DATASHEET_DICT = self.parseThread.getDict()
-
-        self.enableBtn.emit(True)
-        
-        # print(DATASHEET_DICT[0]) #INDEX
-
-        # # add result to dict
-        # for i in DATASHEET_DICT:	
-        #     i["Result"] = 4
-
-        # # iterate items of dict
-        # for distro in DATASHEET_DICT:
-        #     print(distro)
-
-        # #save JSON
-        # with open('test/outdata.txt', 'w') as outfile:
-        #     json.dump(DATASHEET_DICT, outfile)
 
 # Function: dragEnterEvent
 # 		Pre Defined Q List widget for drag event
@@ -119,10 +84,13 @@ class dropScript(QListWidget):
             scriptEnding = self.scriptname.split(".")
 
             if scriptEnding[1] =="json":
-                 # Prints/ emit file path
+                 # Prints file path
                 self.addItem("Input Script: " + self.scriptname)
                 self.scrollToBottom()
-                self.scriptDropped.emit(self.scriptname)
+
+                #Start script worker thread
+                self.parseThread.setScriptToParse(self.scriptname, True)
+                self.parseThread.start()
 
             else:
                 self.addItem("Invalid Script with extension (" + scriptEnding[1] +")")

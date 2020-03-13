@@ -2,14 +2,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 from PyQt5.QtGui import QPixmap, QIcon, QColor
-from PyQt5.QtWidgets import QStatusBar, QLabel, QHBoxLayout, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QStatusBar, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QWidget
 from PyQt5.QtCore import Qt, QPoint, QSize
 
 # User made files
 from GUI_Stylesheets import GUI_Stylesheets
-from logoButton import logoButton
-from dropScript import dropScript
-from beginButton import beginButton
+from scriptPhaseWidget import scriptPhaseWidget
 
 GUI_Style = GUI_Stylesheets()
 
@@ -48,12 +46,11 @@ class Ui_MainWindow(object):
         # ------- Create Objects -----------
         # ----------------------------------
         # create logo button (my little secret)
-        self.Logo = logoButton(self, "")
+        self.Logo = QPushButton(self)
+        self.Logo.setText("")
         self.Logo.setMaximumSize(150, 75)
         self.Logo.setMinimumSize(125, 75)
         self.Logo.setStyleSheet(GUI_Style.iconButton)
-        self.Logo.pressed.connect(self.Logo.On_Click)
-        self.Logo.released.connect(self.Logo.Un_Click)
         self.Logo.setIcon(QIcon(AppliedLogo))
         self.Logo.setIconSize(QSize(150, 75))
 
@@ -62,11 +59,8 @@ class Ui_MainWindow(object):
         titlename.setText("Datasheet Runner")
         titlename.setStyleSheet(GUI_Style.mainTitle)
 
-        # create drag and drop script window
-        self.dropWindow = dropScript(self)
-
-        # create begin button
-        self.beginBtn = beginButton(self, "Begin", self.dropWindow)
+        # create first phase input script UI
+        self.scriptPhaseUI = scriptPhaseWidget(self)
 
         # ----------------------------------
         # ------- Layout Objects -----------
@@ -79,10 +73,9 @@ class Ui_MainWindow(object):
         # Final layout
         self.FinalLayout = QVBoxLayout()
         self.FinalLayout.addLayout(self.titleLayout)
-        self.FinalLayout.addWidget(self.dropWindow)
-        self.FinalLayout.addWidget(self.beginBtn)
-        self.FinalLayout.setSpacing(50)
-        self.FinalLayout.setContentsMargins(0, 10, 0, 0)
+        self.FinalLayout.addWidget(self.scriptPhaseUI)
+        self.FinalLayout.setSpacing(10)
+        self.FinalLayout.setContentsMargins(0, 10, 10, 0)
 
         # set final layout
         MainWindow.setCentralWidget(centralWidget)

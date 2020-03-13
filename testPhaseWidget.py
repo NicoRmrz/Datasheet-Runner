@@ -30,6 +30,7 @@ class testPhaseWidget(QWidget):
         self.resetButton.setMaximumSize(75, 30)
         self.resetButton.setMinimumSize(75, 30)
         self.resetButton.setStyleSheet(GUI_Style.resetButtonIdle)
+        self.resetButton.setFocusPolicy(Qt.NoFocus)
 
         # create save session button
         self.saveButton = QPushButton(self)
@@ -37,6 +38,7 @@ class testPhaseWidget(QWidget):
         self.saveButton.setMaximumSize(75, 30)
         self.saveButton.setMinimumSize(75, 30)
         self.saveButton.setStyleSheet(GUI_Style.buttonIdle)
+        self.saveButton.setFocusPolicy(Qt.NoFocus)
 
         # create previous test button
         self.prevButton = QPushButton(self)
@@ -46,6 +48,7 @@ class testPhaseWidget(QWidget):
         self.prevButton.setStyleSheet(GUI_Style.iconButton)
         self.prevButton.setIcon(QIcon(prevIdle))
         self.prevButton.setIconSize(QSize(150, 75))
+        self.prevButton.setFocusPolicy(Qt.NoFocus)
 
         # create next test button
         self.nextButton = QPushButton(self)
@@ -55,26 +58,30 @@ class testPhaseWidget(QWidget):
         self.nextButton.setStyleSheet(GUI_Style.iconButton)
         self.nextButton.setIcon(QIcon(nextIdle))
         self.nextButton.setIconSize(QSize(150, 75))
+        self.nextButton.setFocusPolicy(Qt.NoFocus)
 
         # Create section field
         self.section = QLineEdit(self)
         self.section.setReadOnly(True)
-        self.section.setText("Section: ")
+        self.section.setText("")
         self.section.setMinimumWidth(75)
         self.section.setStyleSheet(GUI_Style.section)
+        self.section.setFocusPolicy(Qt.NoFocus)
 
         # Create Test field
         self.test = QTextEdit(self)
         self.test.setReadOnly(True)
-        self.test.setText("Test: ")
+        self.test.setText("")
         self.test.setMaximumHeight(75)
         self.test.setStyleSheet(GUI_Style.testWindow)
+        self.test.setFocusPolicy(Qt.NoFocus)
 
         # Create Comment field
         self.comment = QTextEdit(self)
         self.comment.setText("")
         self.comment.setMaximumHeight(150)
         self.comment.setStyleSheet(GUI_Style.comments)
+        self.comment.setFocusPolicy(Qt.StrongFocus)
 
         # Create section label
         sectionLabel = QLabel(self)
@@ -90,26 +97,31 @@ class testPhaseWidget(QWidget):
         minLabel = QLabel(self)
         minLabel.setText("Min")
         minLabel.setStyleSheet(GUI_Style.label)
+        minLabel.setAlignment(Qt.AlignCenter)
 
         # Create max label
         maxLabel = QLabel(self)
         maxLabel.setText("Max")
         maxLabel.setStyleSheet(GUI_Style.label)
+        maxLabel.setAlignment(Qt.AlignCenter)
 
         # Create unit label
         unitLabel = QLabel(self)
         unitLabel.setText("Unit")
         unitLabel.setStyleSheet(GUI_Style.label)
+        unitLabel.setAlignment(Qt.AlignCenter)
 
         # Create Value label
         valueLabel = QLabel(self)
         valueLabel.setText("Value")
         valueLabel.setStyleSheet(GUI_Style.label)
+        valueLabel.setAlignment(Qt.AlignCenter)
 
         # Create pass/fail label
         passFailLabel = QLabel(self)
         passFailLabel.setText("P/F")
         passFailLabel.setStyleSheet(GUI_Style.label)
+        passFailLabel.setAlignment(Qt.AlignCenter)
 
         # Create Comments label
         commentsLabel = QLabel(self)
@@ -118,30 +130,33 @@ class testPhaseWidget(QWidget):
 
         # Create min field
         self.minInput = QLineEdit(self)
-        self.minInput.setText("rr")
+        self.minInput.setText("")
         self.minInput.setReadOnly(True)
         self.minInput.setAlignment(Qt.AlignCenter)
         self.minInput.setMinimumSize(50,50)
-        self.minInput.setMaximumSize(50,50)
+        self.minInput.setMaximumSize(75,50)
         self.minInput.setStyleSheet(GUI_Style.inputBoxNonEdit)
+        self.minInput.setFocusPolicy(Qt.NoFocus)
 
         # Create max field
         self.maxInput = QLineEdit(self)
-        self.maxInput.setText("maxxia")
+        self.maxInput.setText("")
         self.maxInput.setReadOnly(True)
         self.maxInput.setAlignment(Qt.AlignCenter)
         self.maxInput.setMinimumSize(50,50)
-        self.maxInput.setMaximumSize(50,50)        
+        self.maxInput.setMaximumSize(75,50)        
         self.maxInput.setStyleSheet(GUI_Style.inputBoxNonEdit)
+        self.maxInput.setFocusPolicy(Qt.NoFocus)
 
         # Create unit field
         self.unitInput = QLineEdit(self)
-        self.unitInput.setText("mV")
+        self.unitInput.setText("")
         self.unitInput.setReadOnly(True)
         self.unitInput.setAlignment(Qt.AlignCenter)
         self.unitInput.setMinimumSize(50,50)
         self.unitInput.setMaximumSize(50,50)        
         self.unitInput.setStyleSheet(GUI_Style.inputBoxNonEdit)
+        self.unitInput.setFocusPolicy(Qt.NoFocus)
 
         # Create value field
         self.valueInput = QLineEdit(self)
@@ -151,6 +166,7 @@ class testPhaseWidget(QWidget):
         self.valueInput.setMinimumSize(75,50)
         self.valueInput.setMaximumSize(75,50)   
         self.valueInput.setStyleSheet(GUI_Style.inputBox)
+        self.valueInput.setFocusPolicy(Qt.StrongFocus)
 
         # Create max field
         self.passFailInput = QLineEdit(self)
@@ -161,6 +177,7 @@ class testPhaseWidget(QWidget):
         self.passFailInput.setMinimumSize(50,50)
         self.passFailInput.setMaximumSize(50,50) 
         self.passFailInput.setStyleSheet(GUI_Style.passFail)
+        self.passFailInput.setFocusPolicy(Qt.StrongFocus)
 
         # Layout Widget
         # first align each label to input box

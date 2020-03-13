@@ -28,6 +28,7 @@ class scriptPhaseWidget(QWidget):
         self.restoreSeshBtn.setMaximumSize(200, 50)
         self.restoreSeshBtn.setMinimumSize(150, 50)
         self.restoreSeshBtn.setStyleSheet(GUI_Style.buttonIdle)
+        self.restoreSeshBtn.setFocusPolicy(Qt.NoFocus)
 
         # create begin button
         self.beginBtn = QPushButton(self)
@@ -36,6 +37,7 @@ class scriptPhaseWidget(QWidget):
         self.beginBtn.setMinimumSize(150, 50)
         self.beginBtn.setEnabled(False)
         self.beginBtn.setStyleSheet(GUI_Style.beginButtonIdle)
+        self.beginBtn.setFocusPolicy(Qt.NoFocus)
 
         # Layout Widget
         buttonLayout = QHBoxLayout()

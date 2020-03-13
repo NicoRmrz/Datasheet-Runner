@@ -53,6 +53,7 @@ class Ui_MainWindow(object):
         self.Logo.setStyleSheet(GUI_Style.iconButton)
         self.Logo.setIcon(QIcon(AppliedLogo))
         self.Logo.setIconSize(QSize(150, 75))
+        self.Logo.setFocusPolicy(Qt.NoFocus)
 
         # create main title
         titlename = QLabel(self)

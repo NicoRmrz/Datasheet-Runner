@@ -113,7 +113,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # populate test outline QlistWidget
         for i in self.DATASHEET_DICT:
             self.testPhaseUI.testOutline.addItem(i.get('Section'))
-            # self.testPhaseUI.testOutline.data(Qt.UserRole)
 
     # Function: getScriptDict
     # 		Parse JSON file and return with dict of contents

@@ -18,7 +18,6 @@ GUI_Style = GUI_Stylesheets()
 
 # Current version of application - Update for new builds
 appVersion = "1.0"      # Update version
-DATASHEET_DICT = {}
 
 # Icon Image locations
 Main_path = os.getcwd() + "/"
@@ -27,6 +26,19 @@ nextIdle = Main_path + "/icons/nextIdle.png"
 nextPressed = Main_path + "/icons/nextPressed.png"
 prevIdle = Main_path + "/icons/previousIdle.png"
 prevPressed = Main_path + "/icons/prevPressed.png"
+
+os.chdir(Main_path)  #update to a local location.
+
+NETWORK_LOC = "//energydata1/Data/Project/EA030 Generator/Prototype/Datasheet_Runner/"
+SAVE_SESSION = NETWORK_LOC + 'Saved_Sessions/'
+REPORT_LOC = NETWORK_LOC + 'Report/'
+
+if not os.path.exists(SAVE_SESSION):
+    os.makedirs(SAVE_SESSION)
+
+if not os.path.exists(REPORT_LOC):
+    os.makedirs(REPORT_LOC)
+
 
 # Class: MainWindow
 # Parameters: 
@@ -37,15 +49,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     DATASHEET_DICT = {}
     current_Dict = {}
     INDEX = 0   # dictionary index
+    ProtocolName = ""
 
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
-        self.setWindowTitle("Protocol Data Entry v" + appVersion)
+        self.setWindowTitle("Datasheet Runner v" + appVersion)
         self.setWindowIcon(QIcon(AppliedLogo))
 
         # Connect signals to slots
         self.scriptPhaseUI.dropWindow.parseThread.sendDict.connect(self.getScriptDict)
+        self.scriptPhaseUI.dropWindow.parseThread.sendName.connect(self.getName)
         self.scriptPhaseUI.removeInstance.connect(self.testingPhase)
 
     # Function: updateTestGUI
@@ -130,6 +144,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # 		Slot to handle reseting button pressed
     def resetPressed(self):
         self.testPhaseUI.resetButton.setStyleSheet(GUI_Style.buttonPressed)
+        self.saveData()
+
 
     # Function: resetToScriptPhase
     # 		Slot to handle reseting to first input script phase
@@ -158,6 +174,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Connect signals to slots
         self.scriptPhaseUI.removeInstance.connect(self.testingPhase)
         self.scriptPhaseUI.dropWindow.parseThread.sendDict.connect(self.getScriptDict)
+        self.scriptPhaseUI.dropWindow.parseThread.sendName.connect(self.getName)
 
     # ------------------------------------------------------------------
     # ---------------------- Save Session ------------------------------
@@ -172,8 +189,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def saveReleased(self):
         self.testPhaseUI.saveButton.setStyleSheet(GUI_Style.buttonIdle)
 
-        self.saveData()
-        
+        # self.saveData()
+
+    # Function: saveData
+    # 		Slot to handle save use rinput data  
     def saveData (self):
         # add input data to dict
         self.current_Dict["Value"] = self.testPhaseUI.valueInput.text()
@@ -181,8 +200,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.current_Dict["Comment"] = self.testPhaseUI.comment.toPlainText()
 
       #save JSON
-        with open('test/outData.json', 'w') as outfile:
+        with open(SAVE_SESSION + self.ProtocolName +'_SAVE.json', 'w') as outfile:
             json.dump(self.DATASHEET_DICT, outfile)
+
+    # Function: getName
+    # 		Slot to receive input script name to name savedsession JSON file
+    # Parameters: 
+    #   	inputName -  input script name to save to class variable for naming saved session file
+    def getName (self, inputName):
+        self.ProtocolName = inputName
 
     # ------------------------------------------------------------------
     # ---------------------- Previous Test -----------------------------
@@ -199,7 +225,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if (self.INDEX != 0):
             self.INDEX = self.INDEX - 1
         else:
-            self.sendStatusMessage("Cannot go back anymore tests", 1000)
+            self.sendStatusMessage("Reached the beginning of the tests", 1000)
 
         # Update each UI entry with input dict
         self.updateTestGUI()
@@ -218,7 +244,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if (self.INDEX < len(self.DATASHEET_DICT)-1):
             self.INDEX = self.INDEX + 1
         else:
-            self.sendStatusMessage("At the Final Test", 1000)
+            self.sendStatusMessage("Reached the end of the tests", 1000)
 
         # Update each UI entry with input dict
         self.updateTestGUI()
@@ -241,5 +267,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def closeEvent(self, *args, **kwargs):
         if(self.scriptPhaseUI != None):
             self.scriptPhaseUI.dropWindow.parseThread.terminate
-            self.scriptPhaseUI.dropWindow.parseThread.wait(100)        
+            self.scriptPhaseUI.dropWindow.parseThread.wait(100)  
+        else:
+            self.saveData()
+      
         sys.exit(0)

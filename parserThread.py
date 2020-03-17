@@ -1,6 +1,6 @@
 import os
 from PyQt5.QtGui import QImage
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QFile
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QFile, QFileInfo 
 import json
 
 # Class: parserThread
@@ -10,6 +10,7 @@ import json
 class parserThread(QThread):
 	sendOutput = pyqtSignal(str)
 	sendDict = pyqtSignal()
+	sendName = pyqtSignal(str)
 
 	# Sets initial values
 	def __init__(self):
@@ -50,6 +51,16 @@ class parserThread(QThread):
 				if (len(self.datasheet_dict) > 0):
 					self.success = True
 					self.sendDict.emit()
+					fileName = QFileInfo(self.inputScript).baseName()
+
+					if (fileName.endswith("_SAVE")):
+						print(fileName)
+						fileName.replace(QString("_"), QString("."))
+						print(fileName)
+						# fileName = splitName[0]
+
+					print(fileName)
+					self.sendName.emit(fileName)
 					
 			self.parseState = False
 

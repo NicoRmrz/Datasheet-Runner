@@ -81,8 +81,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     INDEX = 0   # dictionary index
     serNum = ""
     EQUIP_INDEX = 0 # equipment list index
+    SPEC_INDEX = 0 # Specific index for writing the quipment to their repective JSON categories. Index is indexed with EQUIP_INDEX
+    PREV_EQUIP_INDEX = 0
+    PREV_SPEC_INDEX = 0
     EquipmentList =[]
     IterJSONList = []
+
 
     '''
     Function: __init__
@@ -464,6 +468,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # reset dict and equip list index
         self.INDEX = 0
         self.EQUIP_INDEX = 0
+        self.SPEC_INDEX = 0
 
         # remove objects from second phase
         self.statusBar.removeWidget(self.testPhaseUI.submitButton)
@@ -607,8 +612,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.IterJSONList.append(matCnt)    # add to JSON iterator list for writing
                 matCnt +=1
 
-
-        print (self.IterJSONList)
         # select first item and setup UI
         self.EQUIP_INDEX = 0
         item = self.testPhaseUI.equipPopup.equipmentList.item(self.EQUIP_INDEX)
@@ -636,18 +639,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         equipType - type of equipment to be displayed enum [Equipment, Tools, Material]
     '''
     def updateEquipmentUI(self, equipType):
+
+        # save equipment
         self.saveEquipment()
+
+        # get specific item index in each category
+        self.SPEC_INDEX = self.IterJSONList[self.EQUIP_INDEX]
 
         # update UI objects and layout
         self.testPhaseUI.equipPopup.switchEquipmentUI(equipType)
 
+
+
+
         if (equipType == EQUIPMENT_TYPE.equipment):
-            pass
-            # self.testPhaseUI.equipPopup.equipmentWidget.modelInput.setText(self.DATASHEET_DICT["Equipment"][1].get('Model'))
+            # print("MODEL = " + self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Model'))
+            self.testPhaseUI.equipPopup.equipmentWidget.modelInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Model'))
             # print (self.EquipmentList[self.EQUIP_INDEX])
             # print (self.EquipmentList[self.EQUIP_INDEX].get('Name'))        
             # self.testPhaseUI.minInput.setText(self.EquipmentList[self.EQUIP_INDEX].get('Min'))        
-
+ 
         elif (equipType == EQUIPMENT_TYPE.tools):
             pass
 
@@ -658,23 +669,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             # print (self.EquipmentList[self.EQUIP_INDEX])
 
+        # set previos indexs
+        self.PREV_SPEC_INDEX  =  self.SPEC_INDEX
+        self.PREV_EQUIP_INDEX =  self.EQUIP_INDEX
+
     '''
     Function: saveEquipment
         Function to save equipment to JSON file
     '''
     def saveEquipment(self):
-        item = self.testPhaseUI.equipPopup.equipmentList.item(self.EQUIP_INDEX)
+        item = self.testPhaseUI.equipPopup.equipmentList.item(self.PREV_EQUIP_INDEX)
 
-        listLen = len(self.DATASHEET_DICT["Equipment"]) + len(self.DATASHEET_DICT["Tools"]) + len(self.DATASHEET_DICT["Material"]) 
-        print(listLen)
-        print(len(self.EquipmentList))
+        # print(self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text())
 
         if (item.data(Qt.UserRole) == EQUIPMENT_TYPE.equipment and self.testPhaseUI.equipPopup.equipmentWidget != None):
-            self.EquipmentList[self.EQUIP_INDEX]["Model"] = self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text()
+            
+            # Save Model
+            self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"] = self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text()  
+            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Model"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"]
 
-            self.DATASHEET_DICT["Equipment"][1] = self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text()
+            # print(str(self.EquipmentList[self.EQUIP_INDEX]) + ", " + str(self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]))
 
-            print(self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text())
+
+
+            # print(self.DATASHEET_DICT["Equipment"][self.SPEC_INDEX])
 
 
             # # add input data to dict
@@ -690,9 +708,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         elif (item.data(Qt.UserRole) == EQUIPMENT_TYPE.material):
             pass
-
-
-        # print( self.EquipmentList)
 
 
         #save JSON

@@ -31,3 +31,6 @@ _ReSharper*/
 #Nuget packages folder
 packages/
 __pycache__
+test/
+/test/Saved_Sessions/outData.json
+

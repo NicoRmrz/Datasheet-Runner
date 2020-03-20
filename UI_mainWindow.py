@@ -2,7 +2,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 from PyQt5.QtGui import QPixmap, QIcon, QColor
-from PyQt5.QtWidgets import QStatusBar, QLabel, QHBoxLayout, QVBoxLayout, QPushButton, QWidget
+from PyQt5.QtWidgets import QStatusBar, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QWidget
 from PyQt5.QtCore import Qt, QPoint, QSize
 
 # User made files
@@ -15,15 +15,23 @@ GUI_Style = GUI_Stylesheets()
 Main_path = os.getcwd() + "/"
 AppliedLogo = Main_path + "/icons/AppliedLogo.png"
 
-# Class: Ui_MainWindow
-# Parameters: 
-#   object - base class
+'''
+Class: Ui_MainWindow
+
+Parameters: 
+    object - base class
+'''
 class Ui_MainWindow(object):
+    '''
+    Function: __init__
+		initializes when class is called
+    '''
     def setupUi(self, MainWindow):
 
         # Main WIndow attributes
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(850, 480)
+        MainWindow.setMinimumWidth(850)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -59,6 +67,11 @@ class Ui_MainWindow(object):
         titlename.setText("Datasheet Runner")
         titlename.setStyleSheet(GUI_Style.mainTitle)
 
+        # input serial number
+        self.serNumInput = QLineEdit(self)
+        self.serNumInput.setStyleSheet(GUI_Style.section)
+        self.serNumInput.setReadOnly(False)
+
         # create first phase input script UI
         self.scriptPhaseUI = scriptPhaseWidget(self)
 
@@ -69,6 +82,9 @@ class Ui_MainWindow(object):
         self.titleLayout = QHBoxLayout()
         self.titleLayout.addWidget(self.Logo)
         self.titleLayout.addWidget(titlename)
+        self.titleLayout.addWidget(self.serNumInput, 1, Qt.AlignRight)
+        self.titleLayout.setContentsMargins(0, 0, 10, 0)
+
 
         # Final layout
         self.FinalLayout = QVBoxLayout()

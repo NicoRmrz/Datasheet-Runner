@@ -1,18 +1,23 @@
 import os
 from PyQt5.QtGui import QImage
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QFile, QFileInfo 
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QFile
 import json
 
-# Class: parserThread
-#       Worker thread to handle all the parsing of the input scripts
-# Parameters: 
-#       QThread - inherits QThread attributes
+'''
+Class: parserThread
+	Worker thread to handle all the parsing of the input scripts
+
+Parameters: 
+	QThread - inherits QThread attributes
+'''
 class parserThread(QThread):
 	sendOutput = pyqtSignal(str)
 	sendDict = pyqtSignal()
-	sendName = pyqtSignal(str)
 
-	# Sets initial values
+	'''
+	Function: __init__
+		Sets initial values
+	'''
 	def __init__(self):
 		QThread.__init__(self)
 		self.inputScript = ""
@@ -20,16 +25,22 @@ class parserThread(QThread):
 		self.datasheet_dict = {}
 		self.success = False
 
-	# Function: setScriptToParse
-	# 		Set worker thread to read in JSON file
-	# Parameters: 
-	#   	pathToFile - input file path
-	#   	state - set state to start worker thread
+	'''
+	Function: setScriptToParse
+		Set worker thread to read in JSON file
+
+	Parameters: 
+	  	pathToFile - input file path
+	  	state - set state to start worker thread
+	'''
 	def setScriptToParse(self, pathToFile, state):
 		self.inputScript = pathToFile
 		self.parseState = state
 		
-	# This function is started by.start() and runs the main portion of the code
+	'''
+	Function: run
+		This function is started by.start() and runs the main portion of the code
+	'''
 	def run(self):
 		self.setPriority(QThread.HighestPriority)
 
@@ -51,22 +62,15 @@ class parserThread(QThread):
 				if (len(self.datasheet_dict) > 0):
 					self.success = True
 					self.sendDict.emit()
-					fileName = QFileInfo(self.inputScript).baseName()
-
-					if (fileName.endswith("_SAVE")):
-						print(fileName)
-						fileName.replace(QString("_"), QString("."))
-						print(fileName)
-						# fileName = splitName[0]
-
-					print(fileName)
-					self.sendName.emit(fileName)
 					
 			self.parseState = False
 
-# Function: getDict
-# 		Get dictionary to mainWindow
-# Returns: 
-#   	python dictionary of input JSON file
+	'''
+	Function: getDict
+		Get dictionary to mainWindow
+		
+	Returns: 
+		python dictionary of input JSON file
+	'''
 	def getDict(self):
 		return self.datasheet_dict

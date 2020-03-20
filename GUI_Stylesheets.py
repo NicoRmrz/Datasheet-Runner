@@ -1,10 +1,17 @@
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QObject, QSize
 
-# Class: GUI_Stylesheets
-#   Stylesheet strings for each UI object
-# Parameters: 
-#   object - base class
+'''
+Class: GUI_Stylesheets
+    Stylesheet strings for each UI object
+    
+Parameters: 
+    object - base class
+'''
 class GUI_Stylesheets(QObject):
+    '''
+    Function: __init__
+		initializes when class is called
+    '''
     def __init__(self):
         super(GUI_Stylesheets, self).__init__()
         
@@ -16,10 +23,10 @@ class GUI_Stylesheets(QObject):
                             )
         
         self.statusBarWhite = ("QStatusBar { background: #20292F;"
-                                        "color:white;} "
-                                        "font: 20 px Verdana;  "
-                            "QStatusBar::item {border: 1px solid #313335; "
-                                "font: 20 px Verdana;  "
+                                        "color:white; border:none;"
+                                        "font: 11px Verdana; } "
+                            "QStatusBar::item {border: none; "
+                                "font: 11px Verdana;  "
                                 "border-radius: 3px; }"
                             )
         
@@ -49,12 +56,24 @@ class GUI_Stylesheets(QObject):
                             "background-color: #6497b1;"
                             "border-radius: 4px")
 
+        self.statusButtonIdle = ("font: bold 14px Verdana; "
+                            "background-color: #6497b1;"
+                            "border-radius: 4px; ")
+
+        self.statusEquipButtonIdle = ("font: bold 14px Verdana; "
+                            "background-color: #00A86B;"
+                            "border-radius: 4px; ")
+
         self.beginButtonIdle = ("font: bold 18px Verdana; "
                             "background-color: rgb(39, 78, 19);"
                             "border-radius: 4px")
 
-        self.resetButtonIdle = ("font: bold 18px Verdana; "
+        self.resetButtonIdle = ("font: bold 14px Verdana; "
                             "background-color: #bd4949;"
+                            "border-radius: 4px")
+
+        self.statusButtonPressed = ("font: bold 14px Verdana; "
+                            "background-color: rgb(100,100,100); "
                             "border-radius: 4px")
 
         self.buttonPressed = ("font: bold 18px Verdana; "
@@ -86,6 +105,22 @@ class GUI_Stylesheets(QObject):
                             "border: none;"
                             "background-color: rgba(0,0,0,0);")
                             
+        self.EquipPopUpLabel = ("font: bold 14px Verdana ; "
+                            "color: white; "
+                            "border: none;"
+                            "background-color: rgba(0,0,0,0);")
+                                                
+        self.EquipInputBox = ("font: bold 14px Verdana ; "
+                            "color: white; "
+                            "border-radius: 2px; "
+                            "border-width: 2px; "
+                            "border-color: black; "                             
+                            "background-color: qlineargradient(spread:pad x1:0.45, y1:0.3695, x2:0.427, y2:0, "
+                                "stop: 0 #677E8C, "
+                                "stop: 0.4 #59717F, "
+                                "stop: 0.5 #4C6472, "
+                                "stop: 1.0 #425866); ")
+
         self.inputBox = ("font: 18px Verdana ; "
                             "color: white; "
                             "border-radius: 2px; "
@@ -106,16 +141,44 @@ class GUI_Stylesheets(QObject):
                             "color: white; "
                             "border: none;"
                              "background-color: rgba(0,0,0,0) ")        
+                            
+        self.passFailInput = ("font: bold  20px Verdana ; "
+                            "color: white; "
+                             "border-radius: 2px; "
+                            "border-width: 2px; "
+                            "border-color: black; " 
+                             "background-color: qlineargradient(spread:pad x1:0.45, y1:0.3695, x2:0.427, y2:0, "
+                                "stop: 0 #677E8C, "
+                                "stop: 0.4 #59717F, "
+                                "stop: 0.5 #4C6472, "
+                                "stop: 1.0 #425866); ")        
         
         self.outlineList = ("QListWidget {"
                                 "font: 18px Verdana; "
                                 "color: white; "
-                                "border: none; }"
-                            "QListWidget::item {"
-                                "border: 1px solid;"
-                                "padding: 2px; "
+                                 "border: 1px solid;"
                                 "border-color: #aeadac; }"
-
                             "QListWidget::item:selected {"
                                     "color: black;"
                                     "background-color: #add8e6;}")
+        
+        self.equipmentList = ("QListWidget {"
+                                "font: 14px Verdana; "
+                                "color: white; "
+                                 "border: 1px solid;"
+                                "border-color: #aeadac; }"
+                            "QListWidget::item:selected {"
+                                    "color: black;"
+                                    "background-color: #add8e6;}")
+         
+        self.passedTest = ("font: bold  20px Verdana ; "
+                            "color: white; "
+                            "border: none;"
+                            "border-radius: 6px;"
+                            "background-color: green")    
+
+        self.failedTest = ("font: bold  20px Verdana ; "
+                            "color: white; "
+                            "border: none;"
+                            "border-radius: 6px;"
+                             "background-color: red ")    

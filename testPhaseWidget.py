@@ -6,6 +6,8 @@ from PyQt5.QtGui import QPixmap, QIcon
 
 # User made files
 from GUI_Stylesheets import GUI_Stylesheets
+from excelThread import excelThread
+from equipmentPopUpWidget import equipmentPopUpWidget
 
 GUI_Style = GUI_Stylesheets()
 
@@ -14,29 +16,51 @@ Main_path = os.getcwd() + "/"
 nextIdle = Main_path + "/icons/nextIdle.png"
 prevIdle = Main_path + "/icons/previousIdle.png"
 
-# Class: testPhaseWidget
-#       Create widget and layout for testing phase
-# Parameters: 
-#   QListWidget - inherits QWidget attributes
+'''
+Class: testPhaseWidget
+    Create widget and layout for testing phase
+    
+Parameters: 
+    QWidget - inherits QWidget attributes
+'''
 class testPhaseWidget(QWidget):
 
-    #initializes when class is called
+    '''
+    Function: __init__
+		initializes when class is called
+    '''
     def __init__(self, parent):
         super(testPhaseWidget, self).__init__(parent)
 
+        # instantiate excel report class
+        self.excelReportThread = excelThread()
+
+        # Instance pop up window
+        self.equipPopup = equipmentPopUpWidget(self)
+
+        # ----------------------------------
+        # ------- Create Objects -----------
+        # ----------------------------------
         # create reset phase button
         self.resetButton = QPushButton(self)
         self.resetButton.setText("Reset")
-        self.resetButton.setMaximumSize(75, 30)
-        self.resetButton.setMinimumSize(75, 30)
+        self.resetButton.setMaximumSize(70, 25)
+        self.resetButton.setMinimumSize(70, 25)
         self.resetButton.setStyleSheet(GUI_Style.resetButtonIdle)
 
-        # create save session button
-        self.saveButton = QPushButton(self)
-        self.saveButton.setText("Save")
-        self.saveButton.setMaximumSize(75, 30)
-        self.saveButton.setMinimumSize(75, 30)
-        self.saveButton.setStyleSheet(GUI_Style.buttonIdle)
+        # create submit button
+        self.submitButton = QPushButton(self)
+        self.submitButton.setText("Submit")
+        self.submitButton.setMaximumSize(70, 25)
+        self.submitButton.setMinimumSize(70, 25)
+        self.submitButton.setStyleSheet(GUI_Style.statusButtonIdle)
+
+        # create Equipment button
+        self.equipmentButton = QPushButton(self)
+        self.equipmentButton.setText("Equipment")
+        self.equipmentButton.setMaximumSize(100, 25)
+        self.equipmentButton.setMinimumSize(100, 25)
+        self.equipmentButton.setStyleSheet(GUI_Style.statusEquipButtonIdle)
 
         # create previous test button
         self.prevButton = QPushButton(self)
@@ -123,16 +147,16 @@ class testPhaseWidget(QWidget):
 
         # Create min field
         self.minInput = QLineEdit(self)
-        self.minInput.setText("rr")
+        self.minInput.setText("")
         self.minInput.setReadOnly(True)
         self.minInput.setAlignment(Qt.AlignCenter)
-        self.minInput.setMinimumSize(50,50)
-        self.minInput.setMaximumSize(60,50)
+        self.minInput.setMinimumSize(75,50)
+        self.minInput.setMaximumSize(75,50)
         self.minInput.setStyleSheet(GUI_Style.inputBoxNonEdit)
 
         # Create max field
         self.maxInput = QLineEdit(self)
-        self.maxInput.setText("maxxia")
+        self.maxInput.setText("")
         self.maxInput.setReadOnly(True)
         self.maxInput.setAlignment(Qt.AlignCenter)
         self.maxInput.setMinimumSize(75,50)
@@ -160,7 +184,6 @@ class testPhaseWidget(QWidget):
         # Create max field
         self.passFailInput = QLineEdit(self)
         self.passFailInput.setText("")
-        self.passFailInput.setReadOnly(True)
         self.passFailInput.setAlignment(Qt.AlignCenter)
         self.passFailInput.setMaximumWidth(50)
         self.passFailInput.setMinimumSize(50,50)
@@ -176,7 +199,9 @@ class testPhaseWidget(QWidget):
         self.testOutline.setDragEnabled(False)
         self.testOutline.setMaximumWidth(100)
 
-        # Layout Widget
+        # ----------------------------------
+        # ------- Layout Objects -----------
+        # ----------------------------------        
         # first align each label to input box
         minLay = QVBoxLayout()
         minLay.addWidget(minLabel)
@@ -215,12 +240,6 @@ class testPhaseWidget(QWidget):
         testIterateBtnLay.addWidget(self.prevButton)
         testIterateBtnLay.addWidget(self.nextButton)
         testIterateBtnLay.setSpacing(50)
-
-        # layout save and reset buttons
-        self.saveResetLay = QVBoxLayout()
-        self.saveResetLay.addWidget(self.saveButton, 0, Qt.AlignRight)
-        self.saveResetLay.addWidget(self.resetButton, 0, Qt.AlignRight)
-        self.saveResetLay.setSpacing(10)
 
         # layout section and test name objects
         sectionLay = QHBoxLayout()

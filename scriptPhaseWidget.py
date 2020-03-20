@@ -8,17 +8,26 @@ from dropScript import dropScript
 
 GUI_Style = GUI_Stylesheets()
 
-# Class: scriptPhaseWidget
-#       Create widget and layout for testing phase
-# Parameters: 
-#   QListWidget - inherits QWidget attributes
+'''
+Class: scriptPhaseWidget
+    Create widget and layout for testing phase
+
+Parameters: 
+    QListWidget - inherits QWidget attributes
+'''
 class scriptPhaseWidget(QWidget):
     removeInstance = pyqtSignal()
-
-    #initializes when class is called
+    
+    '''
+    Function: __init__
+		initializes when class is called
+    '''
     def __init__(self, parent):
         super(scriptPhaseWidget, self).__init__(parent)
 
+        # ----------------------------------
+        # ------- Create Objects -----------
+        # ----------------------------------
         # create drag and drop script window
         self.dropWindow = dropScript(self)
 
@@ -37,7 +46,9 @@ class scriptPhaseWidget(QWidget):
         self.beginBtn.setEnabled(False)
         self.beginBtn.setStyleSheet(GUI_Style.beginButtonIdle)
 
-        # Layout Widget
+        # ----------------------------------
+        # ------- Layout Objects -----------
+        # ----------------------------------          
         buttonLayout = QHBoxLayout()
         buttonLayout.addWidget(self.beginBtn)
         buttonLayout.addWidget(self.restoreSeshBtn)
@@ -57,33 +68,44 @@ class scriptPhaseWidget(QWidget):
         self.restoreSeshBtn.released.connect(self.restoreButton_Released)
         self.dropWindow.enableBtn.connect(self.buttonEnable)
 
-    # Function: restoreButton_Pressed
-    # 		Slot to handle button click
+    '''
+    Function: restoreButton_Pressed
+        Slot to handle button click
+    '''
     def restoreButton_Pressed(self):
         self.restoreSeshBtn.setStyleSheet(GUI_Style.buttonPressed)
 
-    # Function: beginButton_Released
-    # 		Slot to handle button released
+    '''
+    Function: beginButton_Released
+        Slot to handle button released
+    '''
     def restoreButton_Released(self):
         self.restoreSeshBtn.setStyleSheet(GUI_Style.buttonIdle)
 
-    # Function: beginButton_Pressed
-    # 		Slot to handle button click
+    ''' 
+    Function: beginButton_Pressed
+        Slot to handle button click
+    '''
     def beginButton_Pressed(self):
         self.beginBtn.setStyleSheet(GUI_Style.buttonPressed)
 
-    # Function: beginButton_Released
-    # 		Slot to handle button released to re layout UI for testing phase
+    '''
+    Function: beginButton_Released
+        Slot to handle button released to re layout UI for testing phase
+    '''
     def beginButton_Released(self):
         self.beginBtn.setStyleSheet(GUI_Style.buttonIdle)
 
         # to remove widget
         self.removeInstance.emit()
 
-    # Function: buttonEnable
-    # 		Set button enable state
-	# Parameters: 
-	#   	state - button enable status
+    '''
+    Function: buttonEnable
+        Set button enable state
+        
+	Parameters: 
+	  	state - button enable status
+    '''
     def buttonEnable(self, state):
         self.beginBtn.setEnabled(state)
     

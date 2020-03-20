@@ -8,11 +8,13 @@ from parserThread import parserThread
 
 GUI_Style = GUI_Stylesheets()
 
+'''
+Class: dropScript
+    Window to drag and drop input scripts
 
-# Class: dropScript
-#       Window to drag and drop input scripts
-# Parameters: 
-#   QListWidget - inherits QListWidget attributes
+Parameters: 
+    QListWidget - inherits QListWidget attributes
+'''
 class dropScript(QListWidget):
     enableBtn = pyqtSignal(bool)
     scriptname = ""
@@ -36,39 +38,51 @@ class dropScript(QListWidget):
         # Connect signals to slots
         self.parseThread.sendOutput.connect(self.sendOutputWindow)
 
-# Function: sendOutputWindow
-# 		Output message to drag and drop window
-# Parameters: 
-#   	message - message to send to drag and drop window
+    ''' 
+    Function: sendOutputWindow
+        Output message to drag and drop window
+
+    Parameters: 
+        message - message to send to drag and drop window
+    '''
     def sendOutputWindow(self, message):
         self.addItem(message)
         self.scrollToBottom()
         self.enableBtn.emit(self.parseThread.success)
 
-# Function: dragEnterEvent
-# 		Pre Defined Q List widget for drag event
-# Parameters: 
-#   	e - Drag Enter event
+    ''' 
+    Function: dragEnterEvent
+        Pre Defined Q List widget for drag event
+
+    Parameters: 
+        e - Drag Enter event
+    '''
     def dragEnterEvent(self, e):
         if e.mimeData().hasUrls:
             e.accept()
         else:
             e.ignore()
 
-# Function: dragMoveEvent
-# 		Pre Defined Q List widget for drag move event
-# Parameters: 
-#   	e - Drag Move event
+    ''' 
+    Function: dragMoveEvent
+        Pre Defined Q List widget for drag move event
+
+    Parameters: 
+        e - Drag Move event
+    '''
     def dragMoveEvent(self, e):
         if e.mimeData().hasUrls:
             e.accept()
         else:
             e.ignore()
 
-# Function: dropEvent
-# 	    Pre Defined Q List widget for drop eve
-# Parameters: 
-#   	e - drop event
+    ''' 
+    Function: dropEvent
+        Pre Defined Q List widget for drop evet
+
+    Parameters: 
+        e - drop event 
+    '''
     def dropEvent(self, e):
 
         # If drag drop window has url window accepts

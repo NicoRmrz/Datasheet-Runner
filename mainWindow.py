@@ -31,7 +31,8 @@ prevPressed = Main_path + "/icons/prevPressed.png"
 os.chdir(Main_path)  #update to a local location.
 
 # Saved session and exel report locations
-NETWORK_LOC = "//energydata1/Data/Project/EA030 Generator/Prototype/Datasheet_Runner/"
+# NETWORK_LOC = "//energydata1/Data/Project/EA030 Generator/Prototype/Datasheet_Runner/"
+NETWORK_LOC = Main_path + "test/"
 SAVE_SESSION = NETWORK_LOC + 'Saved_Sessions/'
 REPORT_LOC = NETWORK_LOC + 'Report/'
 
@@ -641,7 +642,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.testPhaseUI.equipPopup.switchEquipmentUI(equipType)
 
         if (equipType == EQUIPMENT_TYPE.equipment):
-            self.testPhaseUI.equipPopup.equipmentWidget.modelInput.setText(self.DATASHEET_DICT["Equipment"][1].get('Model'))
+            pass
+            # self.testPhaseUI.equipPopup.equipmentWidget.modelInput.setText(self.DATASHEET_DICT["Equipment"][1].get('Model'))
             # print (self.EquipmentList[self.EQUIP_INDEX])
             # print (self.EquipmentList[self.EQUIP_INDEX].get('Name'))        
             # self.testPhaseUI.minInput.setText(self.EquipmentList[self.EQUIP_INDEX].get('Min'))        

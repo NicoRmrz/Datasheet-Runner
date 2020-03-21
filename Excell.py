@@ -59,6 +59,10 @@ class Excel_Report(QObject):
         # freeze header rows 
         self.ws.freeze_panes = self.ws['B4']
 
+        # merge cells for input protocol name and serial number
+        self.ws.merge_cells("B1:C1")
+        self.ws.merge_cells("B2:C2")
+        
         # Write protocol name on header
         report = self.ws.cell(row=1, column=1)
         report.fill = fillColor
@@ -81,7 +85,7 @@ class Excel_Report(QObject):
         serNum.fill = fillColor
         serNum.font  = fontStyle
         serNum.value = "Serial Number: "
-        serNum.border = Border( top=self.thick_border,left=self.thick_border, 
+        self.ws.cells(row=2, column=1).border = Border( top=self.thick_border,left=self.thick_border, 
                                 right=self.thick_border,bottom=self.thick_border)
 
         # Write serial number name on header
@@ -93,9 +97,7 @@ class Excel_Report(QObject):
                                 right=self.thick_border, bottom=self.thick_border)
         serNum.alignment = Alignment(  horizontal='center', vertical='center', wrap_text=True)
 
-        # merge cells for input protocol name and serial number
-        self.ws.merge_cells("B1:C1")
-        self.ws.merge_cells("B2:C2")
+
 
         # write in header
         header = ["Section", "Min", "Max", "Unit",  "Value", "Result", "Comment"]
@@ -172,15 +174,15 @@ class Excel_Report(QObject):
 	  	Final_Report_Name - report name to display on UI
     '''
     def SaveSheet(self, fileToSave):
-        # To Auto Fit column width
-        dims = {}
-        for row in self.ws.rows:
-            for cell in row:
-                if cell.value:
-                    dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+        # # To Auto Fit column width
+        # dims = {}
+        # for row in self.ws.rows:
+        #     for cell in row:
+        #         if cell.value:
+        #             dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
                      
-        for col, value in dims.items():
-            self.ws.column_dimensions[get_column_letter(col)].width = value+3
+        # for col, value in dims.items():
+        #     self.ws.column_dimensions[get_column_letter(col)].width = value+3
 
         #Timestamps the file
         gettime = self.getTimestamp()

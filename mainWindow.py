@@ -649,15 +649,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # update UI objects and layout
         self.testPhaseUI.equipPopup.switchEquipmentUI(equipType)
 
-
-
-
         if (equipType == EQUIPMENT_TYPE.equipment):
-            # print("MODEL = " + self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Model'))
             self.testPhaseUI.equipPopup.equipmentWidget.modelInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Model'))
-            # print (self.EquipmentList[self.EQUIP_INDEX])
-            # print (self.EquipmentList[self.EQUIP_INDEX].get('Name'))        
-            # self.testPhaseUI.minInput.setText(self.EquipmentList[self.EQUIP_INDEX].get('Min'))        
+            self.testPhaseUI.equipPopup.equipmentWidget.equipmentIDInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('ID'))
+            self.testPhaseUI.equipPopup.equipmentWidget.calibrationIDInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Cal ID'))
+            self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Cal Due Date'))   
  
         elif (equipType == EQUIPMENT_TYPE.tools):
             pass
@@ -679,14 +675,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     '''
     def saveEquipment(self):
         item = self.testPhaseUI.equipPopup.equipmentList.item(self.PREV_EQUIP_INDEX)
+        print(self.PREV_SPEC_INDEX)
 
         # print(self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text())
 
         if (item.data(Qt.UserRole) == EQUIPMENT_TYPE.equipment and self.testPhaseUI.equipPopup.equipmentWidget != None):
-            
-            # Save Model
-            self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"] = self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text()  
+            self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"] = self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text()      # Save Model
             self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Model"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"]
+            
+            self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"] = self.testPhaseUI.equipPopup.equipmentWidget.equipmentIDInput.text()   # Equpment ID
+            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"]
+            
+            self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"] = self.testPhaseUI.equipPopup.equipmentWidget.calibrationIDInput.text()   # Calibration ID
+            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Cal ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"]
+            
+            self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"] = self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.text()   # Calibration Due Date
+            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Cal Due DateID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"]
+
+            
 
             # print(str(self.EquipmentList[self.EQUIP_INDEX]) + ", " + str(self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]))
 

@@ -57,27 +57,24 @@ class Excel_Report(QObject):
         self.ws.title = serialNum
 
         # freeze header rows 
-        self.ws.freeze_panes = self.ws['B4']
+        self.ws.freeze_panes = self.ws['B4']       
 
-        # merge cells for input protocol name and serial number
-        self.ws.merge_cells("B1:C1")
-        self.ws.merge_cells("B2:C2")
-        
         # Write protocol name on header
         report = self.ws.cell(row=1, column=1)
         report.fill = fillColor
         report.font  = fontStyle
         report.value = "Test Report: " 
-        report.border = Border( top=self.thick_border,left=self.thick_border, 
-                                right=self.thick_border,bottom=self.thick_border)
+        report.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
 
         # Write protocol name on header
-        report = self.ws.cell(row=1, column=2)
+        self.ws.merge_cells("B1:C1")
+        report = self.ws["B1"]
+        report1 = self.ws["C1"]
         report.fill = fillColor
         report.font  = boldFont
         report.value = Protocol 
-        report.border = Border( top=self.thick_border,left=self.thick_border, 
-                                right=self.thick_border,bottom=self.thick_border)
+        report.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
+        report1.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
         report.alignment = Alignment( horizontal='center', vertical='center', wrap_text=True)
 
         # Write serial number name on header
@@ -85,19 +82,18 @@ class Excel_Report(QObject):
         serNum.fill = fillColor
         serNum.font  = fontStyle
         serNum.value = "Serial Number: "
-        self.ws.cells(row=2, column=1).border = Border( top=self.thick_border,left=self.thick_border, 
-                                right=self.thick_border,bottom=self.thick_border)
+        serNum.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
 
         # Write serial number name on header
-        serNum = self.ws.cell(row=2, column=2)
+        self.ws.merge_cells("B2:C2")
+        serNum = self.ws["B2"]
+        serNum1 = self.ws["C2"]
         serNum.fill = fillColor
         serNum.font  = boldFont
         serNum.value = serialNum
-        serNum.border = Border( top=self.thick_border,left=self.thick_border, 
-                                right=self.thick_border, bottom=self.thick_border)
+        serNum.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border, bottom=self.thick_border)
+        serNum1.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border, bottom=self.thick_border)
         serNum.alignment = Alignment(  horizontal='center', vertical='center', wrap_text=True)
-
-
 
         # write in header
         header = ["Section", "Min", "Max", "Unit",  "Value", "Result", "Comment"]
@@ -106,8 +102,7 @@ class Excel_Report(QObject):
             self.ws.cell(row=3, column=headCol).value = i
 
             # Border cell
-            self.ws.cell(row=3, column=headCol).border = Border(top=self.thick_border,left=self.thick_border, 
-                                                                right=self.thick_border,bottom=self.thick_border)
+            self.ws.cell(row=3, column=headCol).border = Border(top=self.thick_border,left=self.thick_border,right=self.thick_border,bottom=self.thick_border)
                                                         
             # Align cell
             self.ws.cell(row=3, column=headCol).alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
@@ -136,8 +131,7 @@ class Excel_Report(QObject):
         self.ws.cell(row, col).alignment = Alignment( horizontal='center', vertical='center', wrap_text=True)
 
         # create border per cell
-        enterCell.border = Border(  top = None, left = self.thin_border, 
-                                    right = self.thin_border,bottom = self.thin_border)
+        enterCell.border = Border(  top = None, left = self.thin_border, right = self.thin_border,bottom = self.thin_border)
 
     '''
     Function: colorCellFail

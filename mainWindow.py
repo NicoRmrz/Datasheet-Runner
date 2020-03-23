@@ -260,7 +260,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.testPhaseUI.valueInput.textChanged.connect(self.numericAcceptanceCriteria)
         self.testPhaseUI.passFailInput.textChanged.connect(self.booleanAcceptanceCriteria)
         self.testPhaseUI.testOutline.itemClicked.connect(self.testClicked)
-        self.testPhaseUI.equipPopup.equipmentList.itemClicked.connect(self.equipmentClicked)
+        self.testPhaseUI.equipPopup.equipmentListWidget.itemClicked.connect(self.equipmentClicked)
         self.testPhaseUI.equipPopup.finished.connect(self.equipFinished)
         self.testPhaseUI.excelReportThread.sendReportName.connect(self.reportDone)
 
@@ -570,9 +570,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Function to populate QlistWdiget of equipment from dicitonary when entering testing Phase
     '''
     def populateEquipmentList(self):
-        self.testPhaseUI.equipPopup.equipmentList.clear()
+        self.testPhaseUI.equipPopup.equipmentListWidget.clear()
+        self.IterJSONList.clear()
         self.EquipmentList.clear()
-        equiCnt = 0
+        equiCnt = 0 # authenic iterator index per section
         toolCnt = 0
         matCnt = 0
 
@@ -582,10 +583,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if (i.get('Name') != ""):
                 equip_item = QListWidgetItem(i.get('Name'))
                 equip_item.setData(Qt.UserRole, EQUIPMENT_TYPE.equipment) # set equip type
-                self.testPhaseUI.equipPopup.equipmentList.insertItem(self.EQUIP_INDEX, equip_item)
-                self.EQUIP_INDEX = self.EQUIP_INDEX + 1 # incremement index
+                self.testPhaseUI.equipPopup.equipmentListWidget.insertItem(self.EQUIP_INDEX, equip_item)
                 self.EquipmentList.append(i)    # add equip to list
                 self.IterJSONList.append(equiCnt)    # add to JSON iterator list for writing
+                self.EQUIP_INDEX = self.EQUIP_INDEX + 1 # incremement index
                 equiCnt +=1
 
         # Add tools
@@ -594,10 +595,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if (i.get('Name') != ""):
                 equip_item = QListWidgetItem(i.get('Name'))
                 equip_item.setData(Qt.UserRole, EQUIPMENT_TYPE.tools) # set equip type
-                self.testPhaseUI.equipPopup.equipmentList.insertItem(self.EQUIP_INDEX, equip_item)
-                self.EQUIP_INDEX = self.EQUIP_INDEX + 1 # incremement index
+                self.testPhaseUI.equipPopup.equipmentListWidget.insertItem(self.EQUIP_INDEX, equip_item)
                 self.EquipmentList.append(i)    # add equip to list
                 self.IterJSONList.append(toolCnt)    # add to JSON iterator list for writing
+                self.EQUIP_INDEX = self.EQUIP_INDEX + 1 # incremement index
                 toolCnt +=1
 
         # Add materials
@@ -606,16 +607,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if (i.get('Name') != ""):
                 equip_item = QListWidgetItem(i.get('Name'))
                 equip_item.setData(Qt.UserRole, EQUIPMENT_TYPE.material) # set equip type
-                self.testPhaseUI.equipPopup.equipmentList.insertItem(self.EQUIP_INDEX, equip_item)
-                self.EQUIP_INDEX = self.EQUIP_INDEX + 1 # incremement index
+                self.testPhaseUI.equipPopup.equipmentListWidget.insertItem(self.EQUIP_INDEX, equip_item)
                 self.EquipmentList.append(i)    # add equip to list
                 self.IterJSONList.append(matCnt)    # add to JSON iterator list for writing
+                self.EQUIP_INDEX = self.EQUIP_INDEX + 1 # incremement index
                 matCnt +=1
+
 
         # select first item and setup UI
         self.EQUIP_INDEX = 0
-        item = self.testPhaseUI.equipPopup.equipmentList.item(self.EQUIP_INDEX)
-        self.testPhaseUI.equipPopup.equipmentList.setCurrentItem(item)
+        item = self.testPhaseUI.equipPopup.equipmentListWidget.item(self.EQUIP_INDEX)
+        self.testPhaseUI.equipPopup.equipmentListWidget.setCurrentItem(item)
         self.updateEquipmentUI(item.data(Qt.UserRole))  # set UI for first item
 
     '''
@@ -626,7 +628,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         item - QListWidgetItem that was clicked
     '''
     def equipmentClicked(self, item):
-        self.EQUIP_INDEX = self.testPhaseUI.equipPopup.equipmentList.row(item)
+        self.EQUIP_INDEX = self.testPhaseUI.equipPopup.equipmentListWidget.row(item)
 
         # Update each UI entry with equipment dict and pass in equip type
         self.updateEquipmentUI(item.data(Qt.UserRole))
@@ -656,7 +658,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Cal Due Date'))   
  
         elif (equipType == EQUIPMENT_TYPE.tools):
-            pass
+            self.testPhaseUI.equipPopup.toolWidget.versionInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.tools][self.SPEC_INDEX].get('Version'))
 
             # print (self.EquipmentList[self.EQUIP_INDEX])
 
@@ -674,43 +676,23 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         Function to save equipment to JSON file
     '''
     def saveEquipment(self):
-        item = self.testPhaseUI.equipPopup.equipmentList.item(self.PREV_EQUIP_INDEX)
-        print(self.PREV_SPEC_INDEX)
+        item = self.testPhaseUI.equipPopup.equipmentListWidget.item(self.PREV_EQUIP_INDEX)
 
         # print(self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text())
 
         if (item.data(Qt.UserRole) == EQUIPMENT_TYPE.equipment and self.testPhaseUI.equipPopup.equipmentWidget != None):
             self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"] = self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text()      # Save Model
-            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Model"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"]
-            
             self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"] = self.testPhaseUI.equipPopup.equipmentWidget.equipmentIDInput.text()   # Equpment ID
-            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"]
-            
             self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"] = self.testPhaseUI.equipPopup.equipmentWidget.calibrationIDInput.text()   # Calibration ID
-            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Cal ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"]
-            
             self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"] = self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.text()   # Calibration Due Date
+
+            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Model"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"]
+            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"]
+            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Cal ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"]
             self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Cal Due DateID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"]
 
-            
-
-            # print(str(self.EquipmentList[self.EQUIP_INDEX]) + ", " + str(self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]))
-
-
-
-            # print(self.DATASHEET_DICT["Equipment"][self.SPEC_INDEX])
-
-
-            # # add input data to dict
-            # self.current_Dict["Value"] = self.testPhaseUI.valueInput.text()
-            # self.current_Dict["Result"] = self.testPhaseUI.passFailInput.text()
-            # self.current_Dict["Comment"] = self.testPhaseUI.comment.toPlainText()
-
-  
-            # self.current_Dict = self.DATASHEET_DICT["Procedure"][self.INDEX]
-
         elif (item.data(Qt.UserRole) == EQUIPMENT_TYPE.tools):
-            pass
+            self.EquipmentList[self.PREV_EQUIP_INDEX]["Version"] = self.testPhaseUI.equipPopup.toolWidget.versionInput.text()      # Save Version
 
         elif (item.data(Qt.UserRole) == EQUIPMENT_TYPE.material):
             pass

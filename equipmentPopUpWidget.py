@@ -36,20 +36,20 @@ class equipmentPopUpWidget(QDialog):
         # ----------------------------------
         # ------- Create Objects -----------
         # ----------------------------------
-        self.equipmentList = QListWidget(self)
-        self.equipmentList.setAcceptDrops(False)
-        self.equipmentList.setWordWrap(True)
-        self.equipmentList.setStyleSheet(GUI_Style.equipmentList)
-        self.equipmentList.setDragDropMode(QAbstractItemView.NoDragDrop)
-        self.equipmentList.setDragEnabled(False)
-        self.equipmentList.setMinimumWidth(120)
-        self.equipmentList.setMaximumWidth(120)
+        self.equipmentListWidget = QListWidget(self)
+        self.equipmentListWidget.setAcceptDrops(False)
+        self.equipmentListWidget.setWordWrap(True)
+        self.equipmentListWidget.setStyleSheet(GUI_Style.equipmentList)
+        self.equipmentListWidget.setDragDropMode(QAbstractItemView.NoDragDrop)
+        self.equipmentListWidget.setDragEnabled(False)
+        self.equipmentListWidget.setMinimumWidth(120)
+        self.equipmentListWidget.setMaximumWidth(120)
 
         # ----------------------------------
         # ------- Layout Objects -----------
         # ----------------------------------        
         self.finalLayout = QHBoxLayout()
-        self.finalLayout.addWidget(self.equipmentList, 1, Qt.AlignRight)
+        self.finalLayout.addWidget(self.equipmentListWidget, 1, Qt.AlignRight)
         self.finalLayout.setSpacing(20)
 
         self.setLayout(self.finalLayout)

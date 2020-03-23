@@ -28,15 +28,24 @@ class toolWidget(QWidget):
         # ----------------------------------
         # ------- Create Objects -----------
         # ----------------------------------
-        toolLabel = QLabel(self)
-        toolLabel.setText("Tool:")
-        toolLabel.setStyleSheet(GUI_Style.EquipPopUpLabel)
+        versionLabel = QLabel(self)
+        versionLabel.setText("Version:")
+        versionLabel.setStyleSheet(GUI_Style.EquipPopUpLabel)
+        versionLabel.setAlignment(Qt.AlignCenter)
+
+        self.versionInput = QLineEdit(self)
+        self.versionInput.setText("")
+        self.versionInput.setMinimumSize(175, 25)
+        self.versionInput.setMaximumSize(175, 25)
+        self.versionInput.setStyleSheet(GUI_Style.EquipInputBox)
 
         # ----------------------------------
         # ------- Layout Objects -----------
         # ----------------------------------        
-        self.finalLayout = QHBoxLayout()
-        self.finalLayout.addWidget(toolLabel)
-        self.finalLayout.setSpacing(0)
+        finalLayout = QVBoxLayout()
+        finalLayout.addWidget(versionLabel)
+        finalLayout.addWidget(self.versionInput, 1, Qt.AlignTop)
+        finalLayout.setSpacing(15)
+        finalLayout.setContentsMargins(90, 50, 0, 0)
 
-        self.setLayout(self.finalLayout)
+        self.setLayout(finalLayout)

@@ -1,7 +1,7 @@
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QPushButton, QDialog, QLineEdit, QLabel, QAbstractItemView, QListWidget, QWidget, QHBoxLayout, QVBoxLayout
-from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QObject, QSize
+from PyQt5.QtWidgets import QPushButton, QDialog, QLineEdit, QLabel, QAbstractItemView, QCalendarWidget, QListWidget, QWidget, QHBoxLayout, QVBoxLayout, QDateTimeEdit
+from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QObject, QSize, QDate
 from PyQt5.QtGui import QPixmap, QIcon
 
 # User made files
@@ -61,16 +61,25 @@ class equipmentWidget(QWidget):
         self.calibrationIDInput.setMaximumSize(175, 25)
         self.calibrationIDInput.setStyleSheet(GUI_Style.EquipInputBox)
 
-        calDueDate= QLabel(self)
+        calDueDate = QLabel(self)
         calDueDate.setText("Cal. Due Date:")
         calDueDate.setStyleSheet(GUI_Style.EquipPopUpLabel)
         calDueDate.setAlignment(Qt.AlignRight)
 
-        self.calDueDateInput = QLineEdit(self)
-        self.calDueDateInput.setText("")
+        calender = QCalendarWidget(self)
+        calender.setGridVisible(True)
+        calender.setStyleSheet(GUI_Style.calenderInput)
+
+        self.calDueDateInput = QDateTimeEdit(self)
         self.calDueDateInput.setMinimumSize(150, 25)
         self.calDueDateInput.setMaximumSize(175, 25)
-        self.calDueDateInput.setStyleSheet(GUI_Style.EquipInputBox)
+        self.calDueDateInput.setCalendarPopup(True)
+        self.calDueDateInput.setCalendarWidget(calender)
+        self.calDueDateInput.setDate(QDate.currentDate())
+        self.calDueDateInput.setMinimumDate(QDate.currentDate().addDays(-500))
+        self.calDueDateInput.setMaximumDate(QDate.currentDate().addDays(1000))
+        self.calDueDateInput.setStyleSheet(GUI_Style.calenderInput)
+        self.calDueDateInput.setDisplayFormat("MMM d, yyyy")
 
         # ----------------------------------
         # ------- Layout Objects -----------
@@ -88,6 +97,7 @@ class equipmentWidget(QWidget):
         rightLayout.addWidget(self.equipmentIDInput)
         rightLayout.addWidget(self.calibrationIDInput)
         rightLayout.addWidget(self.calDueDateInput)
+        # rightLayout.addWidget(self.calInput)
         rightLayout.setSpacing(10)
 
         finalLayout = QHBoxLayout()

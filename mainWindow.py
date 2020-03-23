@@ -3,7 +3,7 @@ import sys
 import os
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QPixmap, QIcon, QColor,QBrush
-from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QObject, QSize, QRegularExpression, QFile
+from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QObject, QSize, QRegularExpression, QFile, QDate
 from PyQt5.QtWidgets import QMainWindow, QListWidgetItem
 import json
 import sip
@@ -658,7 +658,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.testPhaseUI.equipPopup.equipmentWidget.modelInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Model'))
             self.testPhaseUI.equipPopup.equipmentWidget.equipmentIDInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('ID'))
             self.testPhaseUI.equipPopup.equipmentWidget.calibrationIDInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Cal ID'))
-            self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Cal Due Date'))   
+            dateJSON = self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Cal Due Date')
+
+            if (dateJSON != ""): # if  date is saved then enter date in "applied" format
+                date = QDate.fromString(dateJSON, "MMM d, yyyy")  
+                self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.setDate(date)   
  
         elif (equipType == EQUIPMENT_TYPE.tools):
             self.testPhaseUI.equipPopup.toolWidget.versionInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.tools][self.SPEC_INDEX].get('Version'))

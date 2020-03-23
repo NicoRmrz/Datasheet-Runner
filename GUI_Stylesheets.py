@@ -120,6 +120,54 @@ class GUI_Stylesheets(QObject):
                                 "stop: 0.4 #59717F, "
                                 "stop: 0.5 #4C6472, "
                                 "stop: 1.0 #425866); ")
+                                                
+        self.calenderInput = ("QDateTimeEdit {padding-right: 15px; "
+                                "border-width: 3; "
+                                "color: white; "
+                                "font: bold 14px Verdana ; "
+                                "border-color: black; "
+                                "background-color: qlineargradient(spread:pad x1:0.45, y1:0.3695, x2:0.427, y2:0, "
+                                "stop: 0 #677E8C, "
+                                "stop: 0.4 #59717F, "
+                                "stop: 0.5 #4C6472, "
+                                "stop: 1.0 #425866); } "
+            
+                                " QCalendarWidget QToolButton {height: 40px;"
+                                                            "width: 125px;"
+                                                            "color: white;"
+                                                            "font-size: 22px;"
+                                                            "icon-size: 40px, 40px;"
+                                                            "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop: 0 #cccccc, stop: 1 #333333);}"
+                                "QCalendarWidget QMenu {width: 100px;"
+                                    "left: 20px;"
+                                    "color: white;"
+                                    "font-size: 18px;"
+                                    "background-color: rgb(100, 100, 100);}"
+                                " QCalendarWidget QSpinBox {width: 100px; "
+                                    "font-size: 18px; "
+                                    "color: white; "
+                                    "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop: 0 #cccccc, stop: 1 #333333); "
+                                    "selection-background-color: rgb(136, 136, 136);"
+                                    "selection-color: rgb(255, 255, 255);}"
+                                "QCalendarWidget QSpinBox::up-button { subcontrol-origin: border;  subcontrol-position: top right;  width:30px; }"
+                                "QCalendarWidget QSpinBox::down-button {subcontrol-origin: border; subcontrol-position: bottom right;  width:30px;}"
+                                "QCalendarWidget QSpinBox::up-arrow { width:30px;  height:40px; }"
+                                "QCalendarWidget QSpinBox::down-arrow { width:30px;  height:40px; }"
+                                
+                                #/* header row */
+                                "QCalendarWidget QWidget { alternate-background-color: rgb(128, 128, 128); }"
+                                
+                                #/* normal days */
+                                "QCalendarWidget QAbstractItemView:enabled  {font-size:20px; "
+                                                                                "color: rgb(180, 180, 180);  "
+                                                                                "background-color: black;  "
+                                                                                "selection-background-color: rgb(64, 64, 64); "
+                                                                                "selection-color: rgb(0, 255, 0); }"
+                                
+                                #/* days in other months */
+                                #/* navigation bar */
+                                "QCalendarWidget QWidget#qt_calendar_navigationbar{  background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop: 0 #cccccc, stop: 1 #333333); }"
+                                "QCalendarWidget QAbstractItemView:disabled { color: rgb(64, 64, 64); }")
 
         self.inputBox = ("font: 18px Verdana ; "
                             "color: white; "

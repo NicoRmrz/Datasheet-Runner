@@ -26,6 +26,12 @@ class Excel_Report(QObject):
     def __init__(self):
         self.thick_border = Side(border_style = "thick")
         self.thin_border = Side(border_style= 'thin')
+        self.THICK =  Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
+        self.THIN = Border(top = None, left = self.thin_border, right = self.thin_border,bottom = self.thin_border)
+        self.fontStyle = Font(size = "14")
+        self.boldFont = Font(size = "14",bold=True)
+        self.fillColor = PatternFill(fgColor=Color('CDCDCD'), fill_type = "solid")
+        self.centerAlignment = Alignment( horizontal='center', vertical='center', wrap_text=True)
 
     '''
     Function: startExcelSheet
@@ -41,9 +47,6 @@ class Excel_Report(QObject):
 	  	openFileName - current open excel file
     '''
     def startExcelSheet(self, exportPath, name, serialNum, Protocol):
-        fontStyle = Font(size = "14")
-        boldFont = Font(size = "14",bold=True)
-        fillColor = PatternFill(fgColor=Color('CDCDCD'), fill_type = "solid")
 
         self.path = exportPath + name+ "/"
 
@@ -57,62 +60,90 @@ class Excel_Report(QObject):
         self.ws.title = serialNum
 
         # freeze header rows 
-        self.ws.freeze_panes = self.ws['B4']       
+        # self.ws.freeze_panes = self.ws['B4']       
 
         # Write protocol name on header
         report = self.ws.cell(row=1, column=1)
-        report.fill = fillColor
-        report.font  = fontStyle
+        report.fill =  self.fillColor
+        report.font  =  self.fontStyle
         report.value = "Test Report: " 
-        report.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
+        report.border = self.THICK 
 
         # Write protocol name on header
         self.ws.merge_cells("B1:C1")
         report = self.ws["B1"]
         report1 = self.ws["C1"]
-        report.fill = fillColor
-        report.font  = boldFont
+        report.fill =  self.fillColor
+        report.font  =  self.boldFont
         report.value = Protocol 
-        report.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
-        report1.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
-        report.alignment = Alignment( horizontal='center', vertical='center', wrap_text=True)
+        report.border = self.THICK 
+        report1.border = self.THICK 
+        report.alignment = self.centerAlignment
 
         # Write serial number name on header
         serNum = self.ws.cell(row=2, column=1)
-        serNum.fill = fillColor
-        serNum.font  = fontStyle
+        serNum.fill =  self.fillColor
+        serNum.font  =  self.fontStyle
         serNum.value = "Serial Number: "
-        serNum.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
+        serNum.border = self.THICK 
 
         # Write serial number name on header
         self.ws.merge_cells("B2:C2")
         serNum = self.ws["B2"]
         serNum1 = self.ws["C2"]
-        serNum.fill = fillColor
-        serNum.font  = boldFont
+        serNum.fill =  self.fillColor
+        serNum.font  =  self.boldFont
         serNum.value = serialNum
-        serNum.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border, bottom=self.thick_border)
-        serNum1.border = Border( top=self.thick_border,left=self.thick_border, right=self.thick_border, bottom=self.thick_border)
-        serNum.alignment = Alignment(  horizontal='center', vertical='center', wrap_text=True)
-
-        # write in header
-        header = ["Section", "Min", "Max", "Unit",  "Value", "Result", "Comment"]
-        headCol = 1
-        for i in header:
-            self.ws.cell(row=3, column=headCol).value = i
-
-            # Border cell
-            self.ws.cell(row=3, column=headCol).border = Border(top=self.thick_border,left=self.thick_border,right=self.thick_border,bottom=self.thick_border)
-                                                        
-            # Align cell
-            self.ws.cell(row=3, column=headCol).alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
-
-            # color header
-            self.ws.cell(row=3, column=headCol).fill = fillColor                                                            
-            headCol += 1
+        serNum.border = self.THICK 
+        serNum1.border =  self.THICK 
+        serNum.alignment = self.centerAlignment
 
         openFileName = self.path + self.suffix
         return openFileName
+
+    '''
+    Function: addHeaderRow
+        Create excel sheet section heading
+
+    Parameters: 
+	  	Hrow         - row to enter header
+	  	title        - section  header title
+	  	headerList   - items to put on header row
+
+    Return:
+        next row
+    '''
+    def addHeaderRow(self, Hrow, title, headerList):
+        # Create header title
+        headerLen = len(headerList)
+        self.ws.merge_cells(start_row=Hrow, start_column=1, end_row=Hrow, end_column=headerLen)
+        titleCell =  self.ws.cell(row=Hrow, column=1)
+        titleCell.value = title
+        titleCell.font  =  self.boldFont
+        titleCell.fill =  self.fillColor
+        titleCell.alignment = self.centerAlignment
+
+        # Next Row
+        Hrow += 1
+
+        # write in header
+        headCol = 1
+        for i in headerList:
+            self.ws.cell(row=Hrow, column=headCol).value = i
+
+            # Border cell
+            self.ws.cell(row=Hrow-1, column=headCol).border = self.THICK # add border to header title
+            self.ws.cell(row=Hrow, column=headCol).border = self.THIN 
+                                                        
+            # Align cell
+            self.ws.cell(row=Hrow, column=headCol).alignment = self.centerAlignment
+
+            # color header
+            self.ws.cell(row=Hrow, column=headCol).fill =  self.fillColor                                                            
+            headCol += 1
+        
+        Hrow += 1
+        return Hrow
 
     '''
     Function: writeExcelEntry
@@ -128,10 +159,10 @@ class Excel_Report(QObject):
         enterCell.value = entry
 
         # Align cell
-        self.ws.cell(row, col).alignment = Alignment( horizontal='center', vertical='center', wrap_text=True)
+        self.ws.cell(row, col).alignment = self.centerAlignment
 
         # create border per cell
-        enterCell.border = Border(  top = None, left = self.thin_border, right = self.thin_border,bottom = self.thin_border)
+        enterCell.border = self.THIN
 
     '''
     Function: colorCellFail
@@ -168,15 +199,17 @@ class Excel_Report(QObject):
 	  	Final_Report_Name - report name to display on UI
     '''
     def SaveSheet(self, fileToSave):
-        # # To Auto Fit column width
-        # dims = {}
-        # for row in self.ws.rows:
-        #     for cell in row:
-        #         if cell.value:
-        #             dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
+        # To Auto Fit column width
+        dims = {}
+        for row in self.ws.rows:
+            for cell in row:
+                if cell.value:
+                    dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))
                      
-        # for col, value in dims.items():
-        #     self.ws.column_dimensions[get_column_letter(col)].width = value+3
+        for col, value in dims.items():
+            # print (str(col) + ", " + str(value))
+            self.ws.column_dimensions[col].width = value+3
+            # self.ws.column_dimensions[get_column_letter(col)].width = value+3
 
         #Timestamps the file
         gettime = self.getTimestamp()

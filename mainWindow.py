@@ -53,17 +53,22 @@ def enum(**enums):
     return type('Enum', (), enums)
 
 '''
-Enum: EQUIPMENT_TYPE
-    equipment   = equipment dictionary section of JSOn file
-    tools       = tools dictionary section of JSOn file
-    material    = material dictionary section of JSOn file
+Enum: EQUIPMENT_TYPE 
+    Enumeration created to define the Equipment Section Names of the JSON file
+
+    equipment   - equipment dictionary section of JSON file
+    tools       - tools dictionary section of JSON file
+    material    - material dictionary section of JSON file
 '''
 EQUIPMENT_TYPE = enum(equipment = "Equipment", tools = "Tools", material = "Material")
 
 '''
 Enum: TEST_TYPE
-    numeric   = numeric test type to test value against min and max
-    bool       = boolean test type only accepts pass or fail
+    Enumeration created to define the test types for the procedure sections.
+    More can be defined here later on.
+
+    numeric   - numeric test type to test value against min and max
+    bool      - boolean test type only accepts pass or fail
 '''
 TEST_TYPE = enum(numeric = "numeric", bool = "bool")
 
@@ -84,9 +89,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     SPEC_INDEX = 0 # Specific index for writing the quipment to their repective JSON categories. Index is indexed with EQUIP_INDEX
     PREV_EQUIP_INDEX = 0
     PREV_SPEC_INDEX = 0
-    EquipmentList =[]
-    IterJSONList = []
-
+    EquipmentList =[]   # list to hold all the dictionaries of all sections of equipment
+    IterJSONList = []   # list to show specific index of each equipment item in their respective section in the JSON file
 
     '''
     Function: __init__
@@ -613,7 +617,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.EQUIP_INDEX = self.EQUIP_INDEX + 1 # incremement index
                 matCnt +=1
 
-
         # select first item and setup UI
         self.EQUIP_INDEX = 0
         item = self.testPhaseUI.equipPopup.equipmentListWidget.item(self.EQUIP_INDEX)
@@ -660,12 +663,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif (equipType == EQUIPMENT_TYPE.tools):
             self.testPhaseUI.equipPopup.toolWidget.versionInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.tools][self.SPEC_INDEX].get('Version'))
 
-            # print (self.EquipmentList[self.EQUIP_INDEX])
-
         elif (equipType == EQUIPMENT_TYPE.material):
-            pass
-
-            # print (self.EquipmentList[self.EQUIP_INDEX])
+            self.testPhaseUI.equipPopup.materialWidget.serialInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.SPEC_INDEX].get('Serial Number'))
+            self.testPhaseUI.equipPopup.materialWidget.revisionInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.SPEC_INDEX].get('Revision'))
+            self.testPhaseUI.equipPopup.materialWidget.firmwareInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.SPEC_INDEX].get('Firmware'))
+            self.testPhaseUI.equipPopup.materialWidget.softwareInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.SPEC_INDEX].get('Software'))
 
         # set previos indexs
         self.PREV_SPEC_INDEX  =  self.SPEC_INDEX
@@ -673,12 +675,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     '''
     Function: saveEquipment
-        Function to save equipment to JSON file
+        Function to save equipment to a local equipment list and to the JSON session file
     '''
     def saveEquipment(self):
         item = self.testPhaseUI.equipPopup.equipmentListWidget.item(self.PREV_EQUIP_INDEX)
-
-        # print(self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text())
 
         if (item.data(Qt.UserRole) == EQUIPMENT_TYPE.equipment and self.testPhaseUI.equipPopup.equipmentWidget != None):
             self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"] = self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text()      # Save Model
@@ -686,18 +686,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"] = self.testPhaseUI.equipPopup.equipmentWidget.calibrationIDInput.text()   # Calibration ID
             self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"] = self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.text()   # Calibration Due Date
 
-            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Model"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"]
-            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"]
-            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Cal ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"]
-            self.DATASHEET_DICT["Equipment"][self.PREV_SPEC_INDEX]["Cal Due DateID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"]
+            self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["Model"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"]
+            self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"]
+            self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["Cal ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"]
+            self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["Cal Due Date"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"]
 
         elif (item.data(Qt.UserRole) == EQUIPMENT_TYPE.tools):
             self.EquipmentList[self.PREV_EQUIP_INDEX]["Version"] = self.testPhaseUI.equipPopup.toolWidget.versionInput.text()      # Save Version
 
+            self.DATASHEET_DICT[EQUIPMENT_TYPE.tools][self.PREV_SPEC_INDEX]["Version"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Version"]
+
         elif (item.data(Qt.UserRole) == EQUIPMENT_TYPE.material):
-            pass
+            self.EquipmentList[self.PREV_EQUIP_INDEX]["Serial Number"] = self.testPhaseUI.equipPopup.materialWidget.serialInput.text()      # Save Serial Number
+            self.EquipmentList[self.PREV_EQUIP_INDEX]["Revision"] = self.testPhaseUI.equipPopup.materialWidget.revisionInput.text()      # Save Revision
+            self.EquipmentList[self.PREV_EQUIP_INDEX]["Firmware"] = self.testPhaseUI.equipPopup.materialWidget.firmwareInput.text()      # Save Firmware
+            self.EquipmentList[self.PREV_EQUIP_INDEX]["Software"] = self.testPhaseUI.equipPopup.materialWidget.softwareInput.text()      # Save Software
 
-
+            self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Serial Number"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Serial Number"]
+            self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Revision"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Revision"]
+            self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Firmware"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Firmware"]
+            self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Software"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Software"]
+       
         #save JSON
         with open(SAVE_SESSION + 'outData.json', 'w') as outfile:
             json.dump(self.DATASHEET_DICT, outfile)    

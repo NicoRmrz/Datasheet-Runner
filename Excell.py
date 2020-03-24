@@ -6,7 +6,7 @@ import openpyxl
 import time
 import datetime
 import os
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QObject, QSize, QElapsedTimer
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QObject, QSize
 
 '''
 Class: Excel_Report
@@ -16,8 +16,9 @@ Parameters:
     QObject - inherits QObject attributes
 '''
 class Excel_Report(QObject):
-    suffix = "_Report_"
+    suffix = "_Report"
     path = ""
+    reportExport = ""
 
     '''
     Function: __init__
@@ -29,13 +30,14 @@ class Excel_Report(QObject):
         self.THICK =  Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
         self.THIN = Border(top = None, left = self.thin_border, right = self.thin_border,bottom = self.thin_border)
         self.fontStyle = Font(size = "14")
+        self.largeFontStyle = Font(size = "20",bold=True)
         self.boldFont = Font(size = "14",bold=True)
         self.fillColor = PatternFill(fgColor=Color('CDCDCD'), fill_type = "solid")
         self.centerAlignment = Alignment( horizontal='center', vertical='center', wrap_text=True)
 
     '''
     Function: startExcelSheet
-		  Create excel sheet and set heading
+		  Create excel report sheet and set heading
 
     Parameters: 
 	  	exportPath - report export network path
@@ -58,9 +60,6 @@ class Excel_Report(QObject):
         self.wb = openpyxl.Workbook()
         self.ws = self.wb.active
         self.ws.title = serialNum
-
-        # freeze header rows 
-        # self.ws.freeze_panes = self.ws['B4']       
 
         # Write protocol name on header
         report = self.ws.cell(row=1, column=1)
@@ -178,6 +177,52 @@ class Excel_Report(QObject):
         colorCell.fill = fillColor
 
     '''
+    Function: startDataAnalysis
+        Create excel data analysis sheet and set heading
+
+    Parameters: 
+	  	reportPath - path to export data analysis when finished
+    
+    Returns: 
+	  	DAfileName - name of data analysis sheet
+    '''
+    def startDataAnalysis(self, reportPath):
+        self.reportExport = reportPath
+        DAfileName =  self.reportExport + "/Data_Analysis_Results"
+
+        self.wb = openpyxl.Workbook()
+        self.ws = self.wb.active
+        self.ws.title = "Data Analysis"
+        self.ws.merge_cells("A1:C1")
+
+        # Write data analysis name on header
+        DAHeader = self.ws.cell(row=1, column=1)
+        DAHeader.fill =  self.fillColor
+        DAHeader.font  =  self.largeFontStyle
+        DAHeader.value = "Data Analysis" 
+        DAHeader.border = self.THICK 
+        self.ws.cell(row=1, column=2).border = self.THICK 
+        self.ws.cell(row=1, column=3).border = self.THICK 
+
+        return DAfileName
+
+    '''
+    Function: parseReport
+        parse input report and retreive all data
+
+    Parameters: 
+	  	inputReport - input report to parse data
+    
+    Returns: 
+	  	resultDict - dictionary of results from report
+    '''
+    def parseReport(self, inputReport):
+        print(inputReport)
+        resultDict =[]
+
+        return resultDict
+
+    '''
     Function: getTimestamp
 		  Gets current time for timestamp
 
@@ -212,9 +257,11 @@ class Excel_Report(QObject):
             # self.ws.column_dimensions[get_column_letter(col)].width = value+3
 
         #Timestamps the file
-        gettime = self.getTimestamp()
-        Final_Report_Name = fileToSave + gettime + '.xlsx'
+        # gettime = self.getTimestamp()
+        # Final_Report_Name = fileToSave + gettime + '.xlsx'
+        Final_Report_Name = fileToSave + '.xlsx'
         self.wb.save(Final_Report_Name)
-        self.suffix = "_Report_"
+
+        self.suffix = "_Report"
 
         return Final_Report_Name

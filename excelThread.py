@@ -1,6 +1,6 @@
 import os
 from PyQt5.QtGui import QImage
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QFile, QDate
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QFile, QDate, QDir, QFileInfo
 
 from Excell import Excel_Report
 
@@ -22,13 +22,27 @@ class excelThread(QThread):
 		QThread.__init__(self)
 		self.reportPath = ""
 		self.name = ""
+		self.dataAnalyDIR = ""
 		self.state = False
+		self.DAstate = False
 		self.datasheet_dict = {}
 		self.excel = Excel_Report()
 		self.protocolHeader = ["Section", "Min", "Max", "Unit",  "Value", "Result", "Comment"]
 		self.equipmentHeader = ["Name", "Model", "ID", "Calibration ID", "Cal Due Date"]
 		self.toolHeader = ["Name", "Version"]
 		self.materialHeader = ["Name", "Serial Number", "Revision", "Firmware", "Software"]
+
+	'''
+	Function: setDataAnalysis
+		Set worker thread to perform data analysis
+
+	Parameters: 
+	  	dataDIR - DIR of all reports for data analysis 
+	  	DAstate - set state to start worker thread
+	'''
+	def setDataAnalysis(self, dataDIR, state):
+		self.dataAnalyDIR = dataDIR
+		self.DAstate = state
 
 	'''
 	Function: setGenerateExcel
@@ -53,6 +67,7 @@ class excelThread(QThread):
 	def run(self):
 		self.setPriority(QThread.HighestPriority)
 
+		# ---------- Excel Report ----------
 		if self.state:
 			# create excel sheet and set header
 			openFile = self.excel.startExcelSheet(	self.reportPath, 
@@ -127,7 +142,10 @@ class excelThread(QThread):
 				self.excel.writeExcelEntry(i.get('Min'), row, 2)
 				self.excel.writeExcelEntry(i.get('Max'), row, 3)
 				self.excel.writeExcelEntry(i.get('Unit'), row, 4)
-				self.excel.writeExcelEntry(i.get('Value'), row, 5)
+				if (i.get('Value')== ""):
+					self.excel.writeExcelEntry('N/A', row, 5)
+				else:
+					self.excel.writeExcelEntry(i.get('Value'), row, 5)
 				self.excel.writeExcelEntry(i.get('Result'), row, 6)
 
 				# color fails red
@@ -141,3 +159,25 @@ class excelThread(QThread):
 			self.sendReportName.emit(reportname)
 
 			self.state = False
+
+		# ---------- Data Analysis ----------
+		if self.DAstate:
+			# put reports in folder in a local list
+			DataAnalysisDIR = QDir(self.dataAnalyDIR)
+			reportList = DataAnalysisDIR.entryList(QDir.Files, QDir.Time)
+
+			# Start data analysis sheet
+			outputSheetName = self.excel.startDataAnalysis(self.dataAnalyDIR)
+
+			# get base name to not parse
+			baseReportName = QFileInfo(outputSheetName)
+
+			# iterate through each report
+			for report in reportList:
+				if (report.endswith('.xlsx') and report != baseReportName.baseName() + '.xlsx'):
+					inputReport = self.dataAnalyDIR + '/' + report
+					resultDict = self.excel.parseReport(inputReport)
+
+			# save data analysis sheet
+			reportname = self.excel.SaveSheet(outputSheetName)
+			self.DAstate = False

@@ -4,7 +4,7 @@ import os
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtGui import QPixmap, QIcon, QColor,QBrush
 from PyQt5.QtCore import Qt, pyqtSlot, pyqtSignal, QObject, QSize, QRegularExpression, QFile, QDate
-from PyQt5.QtWidgets import QMainWindow, QListWidgetItem
+from PyQt5.QtWidgets import QMainWindow, QListWidgetItem, QFileDialog
 import json
 import sip
 from enum import Enum
@@ -112,7 +112,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.scriptPhaseUI.removeInstance.connect(self.testingPhase)
         self.serNumInput.textChanged.connect(self.checkSerialNumber)
         self.excelReportThread.sendReportName.connect(self.reportDone)
-        self.scriptPhaseUI.performAnalysis.connect(self.performDataAnalysis)
+        self.scriptPhaseUI.dataAnalysisBtn.pressed.connect(self.dataAnalysisButton_Pressed)
+        self.scriptPhaseUI.dataAnalysisBtn.released.connect(self.dataAnalysisButton_Released)
 
     # -------------------------------------------------
     # --------------- Populate GUI --------------------
@@ -501,8 +502,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Connect signals to slots
         self.scriptPhaseUI.removeInstance.connect(self.testingPhase)
         self.scriptPhaseUI.dropWindow.parseThread.sendDict.connect(self.getScriptDict)
-        self.scriptPhaseUI.performAnalysis.connect(self.performDataAnalysis)
-
+        self.scriptPhaseUI.dataAnalysisBtn.pressed.connect(self.dataAnalysisButton_Pressed)
+        self.scriptPhaseUI.dataAnalysisBtn.released.connect(self.dataAnalysisButton_Released)
     # ------------------------------------------------------------------
     # --------------------  Generate Report ----------------------------
     # ------------------------------------------------------------------  
@@ -524,8 +525,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.saveData()
 
         # generate report and disable button until procedure has finished
-        self.testPhaseUI.excelReportThread.setGenerateExcel(self.DATASHEET_DICT, REPORT_LOC, "testNAME", True)
-        self.testPhaseUI.excelReportThread.start()
+        self.excelReportThread.setGenerateExcel(self.DATASHEET_DICT, REPORT_LOC, "testNAME", True)
+        self.excelReportThread.start()
         self.testPhaseUI.submitButton.setEnabled(False)
 
     '''
@@ -829,16 +830,25 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # ----------------------- Data Analysis ----------------------------
     # ------------------------------------------------------------------   
     '''
-    Function: performDataAnalysis
-        Slot to execute data analysis
-
-    Parameters:
-        folderPath - folder selected to perform data analysis
+    Function: dataAnalysisButton_Pressed
+        Slot to handle button click
     '''
-    def performDataAnalysis(self, folderPath):
-        print("dat anals")
-        print(folderPath)
-        
+    def dataAnalysisButton_Pressed(self):
+        self.scriptPhaseUI.dataAnalysisBtn.setStyleSheet(GUI_Style.buttonPressed)
+
+    '''
+    Function: dataAnalysisButton_Released
+        Slot to handle button released. Function will iterate through all valid reports and parse data into a new excel sheet.
+        Will call excel worker thread to populate data from all reports and produce reports
+    '''   
+    def dataAnalysisButton_Released(self):
+        self.scriptPhaseUI.dataAnalysisBtn.setStyleSheet(GUI_Style.buttonIdle)
+        folderChosen = str(QFileDialog.getExistingDirectory(self, "Select Directory of Test Reports", REPORT_LOC))
+
+        if (folderChosen != ""):
+            self.scriptPhaseUI.dropWindow.sendOutputWindow("Performing Data Analysis on Reports in Dir:" + folderChosen)
+            self.excelReportThread.setDataAnalysis(folderChosen, True)
+            self.excelReportThread.start()
 
     # ------------------------------------------------------------------
     # ----------- Close All Threads at app closure ---------------------
@@ -853,6 +863,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.scriptPhaseUI.dropWindow.parseThread.wait(100)  
         else:
             self.saveData()
-            self.testPhaseUI.excelReportThread.terminate      
-            self.testPhaseUI.excelReportThread.wait(100)       
+            self.excelReportThread.terminate      
+            self.excelReportThread.wait(100)       
         sys.exit(0)

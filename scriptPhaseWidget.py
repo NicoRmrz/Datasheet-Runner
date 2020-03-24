@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QPushButton, QLineEdit, QLabel, QTextEdit, QAbstractScrollArea,  QGroupBox, QWidget, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import QPushButton, QLineEdit, QLabel, QTextEdit, QAbstractScrollArea,  QWidget, QHBoxLayout, QVBoxLayout
 from PyQt5.QtCore import Qt, pyqtSignal, pyqtSlot, QObject
 
 # User made files
@@ -17,7 +17,6 @@ Parameters:
 '''
 class scriptPhaseWidget(QWidget):
     removeInstance = pyqtSignal()
-    performAnalysis = pyqtSignal(str)
     
     '''
     Function: __init__
@@ -75,8 +74,6 @@ class scriptPhaseWidget(QWidget):
         self.beginBtn.released.connect(self.beginButton_Released)
         self.restoreSeshBtn.pressed.connect(self.restoreButton_Pressed)
         self.restoreSeshBtn.released.connect(self.restoreButton_Released)
-        self.dataAnalysisBtn.pressed.connect(self.dataAnalysisButton_Pressed)
-        self.dataAnalysisBtn.released.connect(self.dataAnalysisButton_Released)
         self.dropWindow.enableBtn.connect(self.buttonEnable)
 
     # ----------------------------------
@@ -125,21 +122,3 @@ class scriptPhaseWidget(QWidget):
     '''
     def buttonEnable(self, state):
         self.beginBtn.setEnabled(state)
-    
-    # ----------------------------------
-    # ------- Data Analysis ------------
-    # ---------------------------------- 
-    '''
-    Function: dataAnalysisButton_Pressed
-        Slot to handle button click
-    '''
-    def dataAnalysisButton_Pressed(self):
-        self.dataAnalysisBtn.setStyleSheet(GUI_Style.buttonPressed)
-
-    '''
-    Function: dataAnalysisButton_Released
-        Slot to handle button released
-    '''
-    def dataAnalysisButton_Released(self):
-        self.dataAnalysisBtn.setStyleSheet(GUI_Style.buttonIdle)
-        self.performAnalysis.emit("folerPathss")

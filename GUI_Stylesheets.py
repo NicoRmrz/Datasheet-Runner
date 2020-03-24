@@ -138,36 +138,42 @@ class GUI_Stylesheets(QObject):
                                                             "font-size: 22px;"
                                                             "icon-size: 40px, 40px;"
                                                             "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop: 0 #cccccc, stop: 1 #333333);}"
+
                                 "QCalendarWidget QMenu {width: 100px;"
                                     "left: 20px;"
                                     "color: white;"
                                     "font-size: 18px;"
                                     "background-color: rgb(100, 100, 100);}"
+
                                 " QCalendarWidget QSpinBox {width: 100px; "
-                                    "font-size: 18px; "
+                                    "font-size: 16px; "
                                     "color: white; "
                                     "background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop: 0 #cccccc, stop: 1 #333333); "
                                     "selection-background-color: rgb(136, 136, 136);"
                                     "selection-color: rgb(255, 255, 255);}"
-                                "QCalendarWidget QSpinBox::up-button { subcontrol-origin: border;  subcontrol-position: top right;  width:30px; }"
-                                "QCalendarWidget QSpinBox::down-button {subcontrol-origin: border; subcontrol-position: bottom right;  width:30px;}"
-                                "QCalendarWidget QSpinBox::up-arrow { width:30px;  height:40px; }"
-                                "QCalendarWidget QSpinBox::down-arrow { width:30px;  height:40px; }"
+
+                                "QCalendarWidget QSpinBox::up-button { subcontrol-origin: border;  subcontrol-position: top right;  width:20px; }"
+
+                                "QCalendarWidget QSpinBox::down-button {subcontrol-origin: border; subcontrol-position: bottom right;  width:20px;}"
+
+                                "QCalendarWidget QSpinBox::up-arrow { width:20px;  height:30px; }"
+
+                                "QCalendarWidget QSpinBox::down-arrow { width:20px;  height:30px; }"
                                 
-                                #/* header row */
-                                "QCalendarWidget QWidget { alternate-background-color: rgb(128, 128, 128); }"
+                                # header row 6
+                                "QCalendarWidget QWidget { alternate-background-color: #1c2226; }"
                                 
-                                #/* normal days */
-                                "QCalendarWidget QAbstractItemView:enabled  {font-size:20px; "
-                                                                                "color: rgb(180, 180, 180);  "
-                                                                                "background-color: black;  "
-                                                                                "selection-background-color: rgb(64, 64, 64); "
-                                                                                "selection-color: rgb(0, 255, 0); }"
+                                # normal days 
+                                "QCalendarWidget QAbstractItemView:enabled  {font-size: 16px; "
+                                                                            "color: rgb(65, 134, 203);  "
+                                                                            "background-color:  #20292F;  "
+                                                                            "selection-background-color: rgb(65, 134, 203); "
+                                                                            "selection-color: rgb(0, 255, 0); }"
                                 
-                                #/* days in other months */
-                                #/* navigation bar */
+                                # days in other months 
+                                # navigation bar 
                                 "QCalendarWidget QWidget#qt_calendar_navigationbar{  background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop: 0 #cccccc, stop: 1 #333333); }"
-                                "QCalendarWidget QAbstractItemView:disabled { color: rgb(64, 64, 64); }")
+                                "QCalendarWidget QAbstractItemView:disabled { color: rgb(100, 100, 100); }")
 
         self.inputBox = ("font: 18px Verdana ; "
                             "color: white; "

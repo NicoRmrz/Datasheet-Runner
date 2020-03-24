@@ -6,7 +6,6 @@ from PyQt5.QtGui import QPixmap, QIcon
 
 # User made files
 from GUI_Stylesheets import GUI_Stylesheets
-from excelThread import excelThread
 from equipmentPopUpWidget import equipmentPopUpWidget
 
 GUI_Style = GUI_Stylesheets()
@@ -29,11 +28,11 @@ class testPhaseWidget(QWidget):
     Function: __init__
 		initializes when class is called
     '''
-    def __init__(self, parent):
+    def __init__(self, parent, excelThread):
         super(testPhaseWidget, self).__init__(parent)
 
-        # instantiate excel report class
-        self.excelReportThread = excelThread()
+        # get excel thread
+        self.excelReportThread = excelThread
 
         # Instance pop up window
         self.equipPopup = equipmentPopUpWidget(self)

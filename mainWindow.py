@@ -14,6 +14,7 @@ from GUI_Stylesheets import GUI_Stylesheets
 from UI_mainWindow import Ui_MainWindow
 from testPhaseWidget import testPhaseWidget
 from scriptPhaseWidget import scriptPhaseWidget
+from excelThread import excelThread
 
 GUI_Style = GUI_Stylesheets()
 
@@ -33,6 +34,7 @@ os.chdir(Main_path)  #update to a local location.
 # Saved session and exel report locations
 # NETWORK_LOC = "//energydata1/Data/Project/EA030 Generator/Prototype/Datasheet_Runner/"
 NETWORK_LOC = Main_path + "test/"
+3
 SAVE_SESSION = NETWORK_LOC + 'Saved_Sessions/'
 REPORT_LOC = NETWORK_LOC + 'Report/'
 
@@ -102,10 +104,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setWindowTitle("Datasheet Runner v" + appVersion)
         self.setWindowIcon(QIcon(AppliedLogo))
 
+        # instantiate excel report class
+        self.excelReportThread = excelThread()
+
         # Connect signals to slots
         self.scriptPhaseUI.dropWindow.parseThread.sendDict.connect(self.getScriptDict)
         self.scriptPhaseUI.removeInstance.connect(self.testingPhase)
         self.serNumInput.textChanged.connect(self.checkSerialNumber)
+        self.excelReportThread.sendReportName.connect(self.reportDone)
+        self.scriptPhaseUI.performAnalysis.connect(self.performDataAnalysis)
 
     # -------------------------------------------------
     # --------------- Populate GUI --------------------
@@ -244,7 +251,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.scriptPhaseUI = None
 
         # set up new UI for next phase
-        self.testPhaseUI = testPhaseWidget(self)
+        self.testPhaseUI = testPhaseWidget(self, self.excelReportThread)
         self.FinalLayout.addWidget(self.testPhaseUI)
         self.statusBar.addPermanentWidget(self.testPhaseUI.equipmentButton, 0)
         self.statusBar.addPermanentWidget(self.testPhaseUI.resetButton, 0)
@@ -266,7 +273,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.testPhaseUI.testOutline.itemClicked.connect(self.testClicked)
         self.testPhaseUI.equipPopup.equipmentListWidget.itemClicked.connect(self.equipmentClicked)
         self.testPhaseUI.equipPopup.finished.connect(self.equipFinished)
-        self.testPhaseUI.excelReportThread.sendReportName.connect(self.reportDone)
 
         # Update each UI entry with input dict
         self.testPhaseUI.testOutline.clear()
@@ -495,6 +501,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # Connect signals to slots
         self.scriptPhaseUI.removeInstance.connect(self.testingPhase)
         self.scriptPhaseUI.dropWindow.parseThread.sendDict.connect(self.getScriptDict)
+        self.scriptPhaseUI.performAnalysis.connect(self.performDataAnalysis)
 
     # ------------------------------------------------------------------
     # --------------------  Generate Report ----------------------------
@@ -817,6 +824,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.testPhaseUI.equipPopup.equipmentListWidget.insertItem(self.EQUIP_INDEX, item)
         self.testPhaseUI.equipPopup.equipmentListWidget.setCurrentItem(item)
+
+    # ------------------------------------------------------------------
+    # ----------------------- Data Analysis ----------------------------
+    # ------------------------------------------------------------------   
+    '''
+    Function: performDataAnalysis
+        Slot to execute data analysis
+
+    Parameters:
+        folderPath - folder selected to perform data analysis
+    '''
+    def performDataAnalysis(self, folderPath):
+        print("dat anals")
+        print(folderPath)
+        
 
     # ------------------------------------------------------------------
     # ----------- Close All Threads at app closure ---------------------

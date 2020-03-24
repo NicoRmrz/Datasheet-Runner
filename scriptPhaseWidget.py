@@ -17,6 +17,7 @@ Parameters:
 '''
 class scriptPhaseWidget(QWidget):
     removeInstance = pyqtSignal()
+    performAnalysis = pyqtSignal(str)
     
     '''
     Function: __init__
@@ -46,12 +47,20 @@ class scriptPhaseWidget(QWidget):
         self.beginBtn.setEnabled(False)
         self.beginBtn.setStyleSheet(GUI_Style.beginButtonIdle)
 
+        # create Data Analysis button
+        self.dataAnalysisBtn = QPushButton(self)
+        self.dataAnalysisBtn.setText("Data Analysis")
+        self.dataAnalysisBtn.setMaximumSize(200, 50)
+        self.dataAnalysisBtn.setMinimumSize(150, 50)
+        self.dataAnalysisBtn.setStyleSheet(GUI_Style.buttonIdle)
+
         # ----------------------------------
         # ------- Layout Objects -----------
         # ----------------------------------          
         buttonLayout = QHBoxLayout()
         buttonLayout.addWidget(self.beginBtn)
         buttonLayout.addWidget(self.restoreSeshBtn)
+        buttonLayout.addWidget(self.dataAnalysisBtn)
         buttonLayout.setSpacing(50)
 
         FinalLayout = QVBoxLayout()
@@ -66,8 +75,13 @@ class scriptPhaseWidget(QWidget):
         self.beginBtn.released.connect(self.beginButton_Released)
         self.restoreSeshBtn.pressed.connect(self.restoreButton_Pressed)
         self.restoreSeshBtn.released.connect(self.restoreButton_Released)
+        self.dataAnalysisBtn.pressed.connect(self.dataAnalysisButton_Pressed)
+        self.dataAnalysisBtn.released.connect(self.dataAnalysisButton_Released)
         self.dropWindow.enableBtn.connect(self.buttonEnable)
 
+    # ----------------------------------
+    # ------- Restore Session ----------
+    # ---------------------------------- 
     '''
     Function: restoreButton_Pressed
         Slot to handle button click
@@ -82,6 +96,9 @@ class scriptPhaseWidget(QWidget):
     def restoreButton_Released(self):
         self.restoreSeshBtn.setStyleSheet(GUI_Style.buttonIdle)
 
+    # ----------------------------------
+    # ------- Begin Session ------------
+    # ---------------------------------- 
     ''' 
     Function: beginButton_Pressed
         Slot to handle button click
@@ -109,3 +126,20 @@ class scriptPhaseWidget(QWidget):
     def buttonEnable(self, state):
         self.beginBtn.setEnabled(state)
     
+    # ----------------------------------
+    # ------- Data Analysis ------------
+    # ---------------------------------- 
+    '''
+    Function: dataAnalysisButton_Pressed
+        Slot to handle button click
+    '''
+    def dataAnalysisButton_Pressed(self):
+        self.dataAnalysisBtn.setStyleSheet(GUI_Style.buttonPressed)
+
+    '''
+    Function: dataAnalysisButton_Released
+        Slot to handle button released
+    '''
+    def dataAnalysisButton_Released(self):
+        self.dataAnalysisBtn.setStyleSheet(GUI_Style.buttonIdle)
+        self.performAnalysis.emit("folerPathss")

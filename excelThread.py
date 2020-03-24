@@ -1,6 +1,6 @@
 import os
 from PyQt5.QtGui import QImage
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QFile
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QFile, QDate
 
 from Excell import Excel_Report
 
@@ -29,7 +29,6 @@ class excelThread(QThread):
 		self.equipmentHeader = ["Name", "Model", "ID", "Calibration ID", "Cal Due Date"]
 		self.toolHeader = ["Name", "Version"]
 		self.materialHeader = ["Name", "Serial Number", "Revision", "Firmware", "Software"]
-
 
 	'''
 	Function: setGenerateExcel
@@ -77,6 +76,13 @@ class excelThread(QThread):
 						self.excel.writeExcelEntry(i.get('Model'), row, 2)
 						self.excel.writeExcelEntry(i.get('ID'), row, 3)
 						self.excel.writeExcelEntry(i.get('Cal ID'), row, 4)
+
+						# color out of calibration equipment red
+						if (i.get('Cal Due Date') != ""):
+							date = QDate.fromString(i.get('Cal Due Date'), "MMM d, yyyy") 
+							if (date < QDate.currentDate()):
+								self.excel.colorCellFail(row, 5)
+
 						self.excel.writeExcelEntry(i.get('Cal Due Date'), row, 5)
 						row += 1
 			row += 1

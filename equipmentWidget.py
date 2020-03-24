@@ -97,7 +97,6 @@ class equipmentWidget(QWidget):
         rightLayout.addWidget(self.equipmentIDInput)
         rightLayout.addWidget(self.calibrationIDInput)
         rightLayout.addWidget(self.calDueDateInput)
-        # rightLayout.addWidget(self.calInput)
         rightLayout.setSpacing(10)
 
         finalLayout = QHBoxLayout()

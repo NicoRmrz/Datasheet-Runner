@@ -658,12 +658,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.testPhaseUI.equipPopup.equipmentWidget.modelInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Model'))
             self.testPhaseUI.equipPopup.equipmentWidget.equipmentIDInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('ID'))
             self.testPhaseUI.equipPopup.equipmentWidget.calibrationIDInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Cal ID'))
-            dateJSON = self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Cal Due Date')
+           
+            #connect out of calibration slot 
+            self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.dateChanged.connect(self.outOfCalibration)
 
+            dateJSON = self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.SPEC_INDEX].get('Cal Due Date')
             if (dateJSON != ""): # if  date is saved then enter date in "applied" format
                 date = QDate.fromString(dateJSON, "MMM d, yyyy")  
                 self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.setDate(date)   
- 
+
+
         elif (equipType == EQUIPMENT_TYPE.tools):
             self.testPhaseUI.equipPopup.toolWidget.versionInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.tools][self.SPEC_INDEX].get('Version'))
 
@@ -685,31 +689,33 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         item = self.testPhaseUI.equipPopup.equipmentListWidget.item(self.PREV_EQUIP_INDEX)
 
         if (item.data(Qt.UserRole) == EQUIPMENT_TYPE.equipment and self.testPhaseUI.equipPopup.equipmentWidget != None):
-            self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"] = self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text()      # Save Model
-            self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"] = self.testPhaseUI.equipPopup.equipmentWidget.equipmentIDInput.text()   # Equpment ID
-            self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"] = self.testPhaseUI.equipPopup.equipmentWidget.calibrationIDInput.text()   # Calibration ID
-            self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"] = self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.text()   # Calibration Due Date
+            if (self.testPhaseUI.equipPopup.equipmentWidget != None):
+                self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"] = self.testPhaseUI.equipPopup.equipmentWidget.modelInput.text()      # Save Model
+                self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"] = self.testPhaseUI.equipPopup.equipmentWidget.equipmentIDInput.text()   # Equpment ID
+                self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"] = self.testPhaseUI.equipPopup.equipmentWidget.calibrationIDInput.text()   # Calibration ID
+                self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"] = self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.text()   # Calibration Due Date
 
-            self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["Model"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"]
-            self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"]
-            self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["Cal ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"]
-            self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["Cal Due Date"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"]
+                self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["Model"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Model"]
+                self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["ID"]
+                self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["Cal ID"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal ID"]
+                self.DATASHEET_DICT[EQUIPMENT_TYPE.equipment][self.PREV_SPEC_INDEX]["Cal Due Date"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Cal Due Date"]
 
         elif (item.data(Qt.UserRole) == EQUIPMENT_TYPE.tools):
-            self.EquipmentList[self.PREV_EQUIP_INDEX]["Version"] = self.testPhaseUI.equipPopup.toolWidget.versionInput.text()      # Save Version
-
-            self.DATASHEET_DICT[EQUIPMENT_TYPE.tools][self.PREV_SPEC_INDEX]["Version"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Version"]
+            if (self.testPhaseUI.equipPopup.toolWidget != None):
+                self.EquipmentList[self.PREV_EQUIP_INDEX]["Version"] = self.testPhaseUI.equipPopup.toolWidget.versionInput.text()      # Save Version
+                self.DATASHEET_DICT[EQUIPMENT_TYPE.tools][self.PREV_SPEC_INDEX]["Version"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Version"]
 
         elif (item.data(Qt.UserRole) == EQUIPMENT_TYPE.material):
-            self.EquipmentList[self.PREV_EQUIP_INDEX]["Serial Number"] = self.testPhaseUI.equipPopup.materialWidget.serialInput.text()      # Save Serial Number
-            self.EquipmentList[self.PREV_EQUIP_INDEX]["Revision"] = self.testPhaseUI.equipPopup.materialWidget.revisionInput.text()      # Save Revision
-            self.EquipmentList[self.PREV_EQUIP_INDEX]["Firmware"] = self.testPhaseUI.equipPopup.materialWidget.firmwareInput.text()      # Save Firmware
-            self.EquipmentList[self.PREV_EQUIP_INDEX]["Software"] = self.testPhaseUI.equipPopup.materialWidget.softwareInput.text()      # Save Software
+            if (self.testPhaseUI.equipPopup.materialWidget != None):
+                self.EquipmentList[self.PREV_EQUIP_INDEX]["Serial Number"] = self.testPhaseUI.equipPopup.materialWidget.serialInput.text()      # Save Serial Number
+                self.EquipmentList[self.PREV_EQUIP_INDEX]["Revision"] = self.testPhaseUI.equipPopup.materialWidget.revisionInput.text()      # Save Revision
+                self.EquipmentList[self.PREV_EQUIP_INDEX]["Firmware"] = self.testPhaseUI.equipPopup.materialWidget.firmwareInput.text()      # Save Firmware
+                self.EquipmentList[self.PREV_EQUIP_INDEX]["Software"] = self.testPhaseUI.equipPopup.materialWidget.softwareInput.text()      # Save Software
 
-            self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Serial Number"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Serial Number"]
-            self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Revision"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Revision"]
-            self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Firmware"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Firmware"]
-            self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Software"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Software"]
+                self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Serial Number"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Serial Number"]
+                self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Revision"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Revision"]
+                self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Firmware"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Firmware"]
+                self.DATASHEET_DICT[EQUIPMENT_TYPE.material][self.PREV_SPEC_INDEX]["Software"] =  self.EquipmentList[self.PREV_EQUIP_INDEX]["Software"]
        
         #save JSON
         with open(SAVE_SESSION + 'outData.json', 'w') as outfile:
@@ -790,6 +796,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Update each UI entry with input dict
         self.updateTestGUI()
+
+    # ------------------------------------------------------------------
+    # -------------- Calibration Due Date Changed ----------------------
+    # ------------------------------------------------------------------   
+    '''
+    Function: outOfCalibration
+    	Slot to handle cal due date out of calibration. Color red to indicate tester
+
+    Parameters:
+        thisNewDate - new date chosen from QTimeDates QCalender popup
+    '''
+    def outOfCalibration(self, thisNewDate):
+        item = QListWidgetItem(self.testPhaseUI.equipPopup.equipmentListWidget.takeItem(self.EQUIP_INDEX))
+
+        if (thisNewDate < QDate.currentDate()):
+            item.setBackground(QColor("red"))
+        else:
+            item.setBackground(QColor("#20292F"))
+
+        self.testPhaseUI.equipPopup.equipmentListWidget.insertItem(self.EQUIP_INDEX, item)
+        self.testPhaseUI.equipPopup.equipmentListWidget.setCurrentItem(item)
 
     # ------------------------------------------------------------------
     # ----------- Close All Threads at app closure ---------------------

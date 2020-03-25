@@ -675,7 +675,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 date = QDate.fromString(dateJSON, "MMM d, yyyy")  
                 self.testPhaseUI.equipPopup.equipmentWidget.calDueDateInput.setDate(date)   
 
-
         elif (equipType == EQUIPMENT_TYPE.tools):
             self.testPhaseUI.equipPopup.toolWidget.versionInput.setText(self.DATASHEET_DICT[EQUIPMENT_TYPE.tools][self.SPEC_INDEX].get('Version'))
 

@@ -154,6 +154,14 @@ class excelThread(QThread):
 				self.excel.writeExcelEntry(i.get('Comment'), row, 7)
 				row += 1
 
+			row += 2
+			self.excel.writeExcelEntry("Tested By:", row, 1)
+			self.excel.writeExcelEntry("____________", row, 2)
+			self.excel.writeExcelEntry("Sign:", row, 4)
+			self.excel.writeExcelEntry("____________", row, 5)
+			self.excel.writeExcelEntry("Date:", row, 7)
+			self.excel.writeExcelEntry("____________", row, 8)
+
 			# save excel report
 			reportname = self.excel.SaveSheet(openFile)
 			self.sendReportName.emit(reportname)
@@ -165,20 +173,22 @@ class excelThread(QThread):
 			# put reports in folder in a local list
 			DataAnalysisDIR = QDir(self.dataAnalyDIR)
 			reportList = DataAnalysisDIR.entryList(QDir.Files, QDir.Time)
+			reportDataList = []
 
 			# Start data analysis sheet
 			outputSheetName = self.excel.startDataAnalysis(self.dataAnalyDIR)
 
 			# get base name to not parse
 			baseReportName = QFileInfo(outputSheetName)
-
+			
 			# iterate through each report
 			for report in reportList:
 				if (report.endswith('.xlsx') and report != baseReportName.baseName() + '.xlsx'):
 					inputReport = self.dataAnalyDIR + '/' + report
-					resultDict, reportSerNum = self.excel.parseReport(inputReport)
-					# print(reportSerNum)
+					resultDict = self.excel.parseReport(inputReport)
+					reportDataList.append(resultDict)
 
+			print(reportDataList)
 			# save data analysis sheet
 			reportname = self.excel.SaveSheet(outputSheetName)
 			self.DAstate = False

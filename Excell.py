@@ -208,27 +208,30 @@ class Excel_Report(QObject):
 
     '''
     Function: parseReport
-        parse input report and retreive all data
+        parse input report and retreive all data and return data is resultDict
 
     Parameters: 
 	  	inputReport - input report to parse data5
     
     Returns: 
 	  	resultDict - dictionary of results from report
-        serNum     - serial number of DUT
     '''
     def parseReport(self, inputReport):
         resultDict ={}
-        serNum = ""
         sectionList = []
+        valueList = []
+        resultList = []
+        serNum = ""
         lastTestRow = 0
         firstRow = 0
+        foundLastRow = False
 
         wb = load_workbook(filename = inputReport)
         wsl = wb.active
         serNum = wsl.cell(row=2, column=2).value # get serial number from sheet
         lastRow = wsl.max_row  # get last row of report
-        print(inputReport)
+
+        resultDict["Serial Number"] = serNum
 
         # first find procedure header row
         for row in range(1, lastRow):
@@ -237,22 +240,42 @@ class Excel_Report(QObject):
                 # get first row
                 firstRow = row + 1
 
-                # find last row of test procedure section
-                for row in range(firstRow, lastRow):
+        # find last row of test procedure section
+        for row in range(firstRow, lastRow):
+            # print(wsl.cell(row=row, column=1).value)
+            
+            
+            # find first empty row (if signature is added on bottom)
+            # if (wsl.cell(row=row, column=1).value != None): 
 
-                    #find first empty row
-                    if (wsl.cell(row=row, column=1).value == ""):
-                        lastTestRow = row -1
-                    else:   # else nothing past last table so final row is end of table
-                        lastTestRow = lastRow
+            if (wsl.cell(row=row, column=1).value == None and foundLastRow == False):
+                lastTestRow = row 
+                foundLastRow = True
 
-        # iterate through each test sections
+            elif(lastTestRow == 0):
+                lastTestRow = lastRow +1
+
+
+            # elif(wsl.cell(row=row + 1, column=1).value != None):
+            #     lastTestRow = row
+
+            # else: # if there is no signature on bottom
+            #     lastTestRow = lastRow
+
+        print(lastRow, lastTestRow)
+                
+        # iterate through each test sections and append to lists
         for row in range(firstRow, lastTestRow):
-            print(wsl.cell(row=row, column=1).value)
-            print(wsl.cell(row=row, column=5).value)
-            print(wsl.cell(row=row, column=6).value)
+            sectionList.append(wsl.cell(row=row, column=1).value)
+            valueList.append(wsl.cell(row=row, column=5).value)
+            resultList.append(wsl.cell(row=row, column=6).value)
  
-        return resultDict, serNum
+        # add each list to dict
+        resultDict["Section"] = sectionList
+        resultDict["Value"] = valueList
+        resultDict["Result"] = resultList
+
+        return resultDict
 
     '''
     Function: getTimestamp

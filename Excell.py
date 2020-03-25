@@ -51,14 +51,13 @@ class Excel_Report(QObject):
 	  	openFileName - current open excel file
     '''
     def startExcelSheet(self, exportPath, name, serialNum, Protocol):
-
         self.path = exportPath + name+ "/"
 
         #Create test folder path in report folder
         if not os.path.exists(self.path):
           os.makedirs(self.path)
 
-        self.suffix = serialNum + self.suffix
+        fileName = serialNum + self.suffix
         self.wb = openpyxl.Workbook()
         self.ws = self.wb.active
         self.ws.title = serialNum
@@ -99,7 +98,7 @@ class Excel_Report(QObject):
         serNum1.border =  self.THICK 
         serNum.alignment = self.centerAlignment
 
-        openFileName = self.path + self.suffix
+        openFileName = self.path + fileName
         return openFileName
 
     '''
@@ -187,6 +186,30 @@ class Excel_Report(QObject):
 
         # create border per cell
         enterCell.border = self.THIN
+
+    '''
+    Function: writeSignature
+		  Writes to excel sheet tester name/ sign/ date
+
+    Parameters: 
+	  	row - excel row to write to 
+    '''
+    def writeSignature(self, row):
+        # self.ws.merge_cells("A" + str(row) + ":" + "B" + str(row))
+        # self.ws.merge_cells("C" + str(row) + ":" + "D" + str(row))
+        # self.ws.merge_cells("E" + str(row) + ":" + "F" + str(row))
+
+        self.ws.cell(row=row, column=1).value = "Tested By:"
+        self.ws.cell(row=row, column=2).value = "_______________________________"
+        self.ws.cell(row=row, column=3).value = "Sign:"
+        self.ws.cell(row=row, column=4).value = "_______________________________"
+        self.ws.cell(row=row, column=5).value = "Date:"
+        self.ws.cell(row=row, column=6).value = "_______________________________"
+
+        # Align cell
+        # self.ws.cell(row, 1).alignment = self.centerAlignment
+
+
 
     '''
     Function: colorCellFail

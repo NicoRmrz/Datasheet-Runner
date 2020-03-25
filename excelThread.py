@@ -12,7 +12,7 @@ Parameters:
 	QThread - inherits QThread attributes
 '''
 class excelThread(QThread):
-	sendReportName = pyqtSignal(str)
+	sendReportName = pyqtSignal(str, bool)
 	sendOutput = pyqtSignal(str)
 
 	'''
@@ -156,23 +156,18 @@ class excelThread(QThread):
 				row += 1
 
 			row += 2
-			self.excel.writeExcelEntry("Tested By:", row, 1)
-			self.excel.writeExcelEntry("____________", row, 2)
-			self.excel.writeExcelEntry("Sign:", row, 4)
-			self.excel.writeExcelEntry("____________", row, 5)
-			self.excel.writeExcelEntry("Date:", row, 7)
-			self.excel.writeExcelEntry("____________", row, 8)
+
+			# input last row
+			self.excel.writeSignature(row)
 
 			# save excel report/ emit error 
 			try:
 				reportname = self.excel.SaveSheet(openFile)
-				self.sendReportName.emit(reportname)
+				self.sendReportName.emit(reportname, True)
 				
 			# error is sheet is opened by user and trying to save
 			except PermissionError as e:
-				self.sendOutput.emit("")
-				self.sendOutput.emit("FAILED: Please Close Opened Excel Sheet")
-				self.sendOutput.emit(str(e))
+				self.sendReportName.emit("FAILED: Please Close Opened Excel Sheet", False)
 
 			self.state = False
 

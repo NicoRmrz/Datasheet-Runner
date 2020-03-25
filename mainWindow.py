@@ -122,6 +122,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.excelReportThread.sendReportName.connect(self.reportDone)
         self.scriptPhaseUI.dataAnalysisBtn.pressed.connect(self.dataAnalysisButton_Pressed)
         self.scriptPhaseUI.dataAnalysisBtn.released.connect(self.dataAnalysisButton_Released)
+        self.excelReportThread.sendOutput.connect(self.scriptPhaseUI.dropWindow.sendOutputWindow)
 
     # -------------------------------------------------
     # --------------- Populate GUI --------------------
@@ -238,7 +239,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
       	message -  message to show on status bar
       	time -  time for message to show
     '''
-    @pyqtSlot()
     def sendStatusMessage(self, message, time):
         self.statusBar.showMessage(message, time)
 
@@ -512,6 +512,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.scriptPhaseUI.dropWindow.parseThread.sendDict.connect(self.getScriptDict)
         self.scriptPhaseUI.dataAnalysisBtn.pressed.connect(self.dataAnalysisButton_Pressed)
         self.scriptPhaseUI.dataAnalysisBtn.released.connect(self.dataAnalysisButton_Released)
+        self.excelReportThread.sendOutput.connect(self.scriptPhaseUI.dropWindow.sendOutputWindow)
+        
     # ------------------------------------------------------------------
     # --------------------  Generate Report ----------------------------
     # ------------------------------------------------------------------  
@@ -544,14 +546,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     Parameters:
         name - excel report name  
     '''
-    def reportDone(self, name):
-        self.sendStatusMessage("Report: " + name, 20000)
+    def reportDone(self, name, status):
+        if (status):
+            self.sendStatusMessage("Report: " + name, 20000)
+
+            # Remove saved session once complete
+            fileToRemove = QFile(SAVE_SESSION + 'outData.json')
+            if (fileToRemove.exists()):
+                fileToRemove.remove()
+        else:
+            self.sendStatusMessage("Report: " + name, 20000)
+
         self.testPhaseUI.submitButton.setEnabled(True)
 
-        # Remove saved session once complete
-        fileToRemove = QFile(SAVE_SESSION + 'outData.json')
-        if (fileToRemove.exists()):
-            fileToRemove.remove()
+
  
     '''
     Function: saveData

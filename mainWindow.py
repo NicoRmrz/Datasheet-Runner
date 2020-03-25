@@ -114,6 +114,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.excelReportThread.sendReportName.connect(self.reportDone)
         self.scriptPhaseUI.dataAnalysisBtn.pressed.connect(self.dataAnalysisButton_Pressed)
         self.scriptPhaseUI.dataAnalysisBtn.released.connect(self.dataAnalysisButton_Released)
+        self.excelReportThread.sendOutput.connect(self.scriptPhaseUI.dropWindow.sendOutputWindow)
 
     # -------------------------------------------------
     # --------------- Populate GUI --------------------
@@ -504,6 +505,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.scriptPhaseUI.dropWindow.parseThread.sendDict.connect(self.getScriptDict)
         self.scriptPhaseUI.dataAnalysisBtn.pressed.connect(self.dataAnalysisButton_Pressed)
         self.scriptPhaseUI.dataAnalysisBtn.released.connect(self.dataAnalysisButton_Released)
+        self.excelReportThread.sendOutput.connect(self.scriptPhaseUI.dropWindow.sendOutputWindow)
+
     # ------------------------------------------------------------------
     # --------------------  Generate Report ----------------------------
     # ------------------------------------------------------------------  

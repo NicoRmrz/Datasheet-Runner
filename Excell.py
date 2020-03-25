@@ -29,6 +29,7 @@ class Excel_Report(QObject):
         self.thin_border = Side(border_style= 'thin')
         self.THICK =  Border( top=self.thick_border,left=self.thick_border, right=self.thick_border,bottom=self.thick_border)
         self.THIN = Border(top = None, left = self.thin_border, right = self.thin_border,bottom = self.thin_border)
+        self.FULLTHIN = Border(top = self.thin_border, left = self.thin_border, right = self.thin_border,bottom = self.thin_border)
         self.fontStyle = Font(size = "14")
         self.largeFontStyle = Font(size = "20",bold=True)
         self.boldFont = Font(size = "14",bold=True)
@@ -101,11 +102,29 @@ class Excel_Report(QObject):
         return openFileName
 
     '''
+    Function: addSingleHeader
+        Create excel sheet single section heading
+
+    Parameters: 
+	  	Hrow         - row to enter header
+	  	title        - section  header title
+    '''
+    def addSingleHeader(self, Hrow, Hcol, title):
+        # Create header title
+        titleCell =  self.ws.cell(row=Hrow, column=Hcol)
+        titleCell.value = title
+        titleCell.font  =  self.boldFont
+        titleCell.fill =  self.fillColor
+        titleCell.alignment = self.centerAlignment
+        titleCell.border = self.FULLTHIN 
+
+    '''
     Function: addHeaderRow
         Create excel sheet section heading
 
     Parameters: 
 	  	Hrow         - row to enter header
+	  	Hcol         - col to enter header
 	  	title        - section  header title
 	  	headerList   - items to put on header row
 
@@ -119,7 +138,7 @@ class Excel_Report(QObject):
             self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=headerLen)
         else:
             self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=headerLen + 1)
-            
+
         titleCell =  self.ws.cell(row=Hrow, column=Hcol)
         titleCell.value = title
         titleCell.font  =  self.boldFont
@@ -252,8 +271,8 @@ class Excel_Report(QObject):
                 lastTestRow = row 
                 foundLastRow = True
             # else last row is end of table
-            elif(lastTestRow == 0):
-                lastTestRow = lastRow +1
+            elif (lastTestRow == 0):
+                lastTestRow = lastRow + 1
 
         # iterate through each test sections and append to lists
         for row in range(firstRow, lastTestRow):

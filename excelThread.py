@@ -13,6 +13,7 @@ Parameters:
 '''
 class excelThread(QThread):
 	sendReportName = pyqtSignal(str)
+	sendOutput = pyqtSignal(str)
 
 	'''
 	Function: __init__
@@ -162,9 +163,15 @@ class excelThread(QThread):
 			self.excel.writeExcelEntry("Date:", row, 7)
 			self.excel.writeExcelEntry("____________", row, 8)
 
-			# save excel report
-			reportname = self.excel.SaveSheet(openFile)
-			self.sendReportName.emit(reportname)
+			# save excel report/ emit error 
+			try:
+				reportname = self.excel.SaveSheet(openFile)
+				self.sendReportName.emit(reportname)
+
+			except PermissionError as e:
+				self.sendOutput.emit("")
+				self.sendOutput.emit("FAILED: Please Close Opened Excel Sheet")
+				self.sendOutput.emit(str(e))
 
 			self.state = False
 
@@ -188,17 +195,47 @@ class excelThread(QThread):
 					resultDict = self.excel.parseReport(inputReport)
 					reportDataList.append(resultDict)
 
-			# add serial numbers in list for header
+			# declare local variable for populating data analysis
 			serNumList = []
 			row = 3
-			for i in range(0, len(reportDataList)):
+			numTests = len(reportDataList[0]["Section"])
+			numReports = len(reportDataList)
+
+			# add serial numbers in list for header
+			for i in range(0, numReports):
 				serNumList.append(reportDataList[i].get("Serial Number"))
 
 			# write header to data analysis
 			row = self.excel.addHeaderRow(row, 2, "DUTs", serNumList)
-			print (row)
+			self.excel.addSingleHeader(row - 1, 1, "Tests")
+					
+			# populate with report data
+			for test in range(0, numReports):
+				for i in range(0, numTests):
+					self.excel.writeExcelEntry(reportDataList[test]["Section"][i], row + i, 1)
+					self.excel.writeExcelEntry(reportDataList[test]["Value"][i], row + i, test + 2)
 
-			# save data analysis sheet
-			reportname = self.excel.SaveSheet(outputSheetName)
-			print(reportname)
+					# color failed tests red
+					if (reportDataList[test]["Result"][i] == "F"):
+						self.excel.colorCellFail(row + i, test + 2)
+
+					
+			# make bar graph
+			for i in range(0, numTests):
+				for test in range(0, numReports):
+					print("Test: " + str(test))
+					print( "Result:  " + reportDataList[test]["Result"][i])
+					print( "Value:  " + reportDataList[test]["Value"][i])
+
+			# save data analysis sheet/ emit error 
+			try:
+				reportname = self.excel.SaveSheet(outputSheetName)
+				self.sendOutput.emit("")
+				self.sendOutput.emit("Data Analysis Successful: " + reportname)
+
+			except PermissionError as e:
+				self.sendOutput.emit("")
+				self.sendOutput.emit("FAILED: Please Close Opened Excel Sheet")
+				self.sendOutput.emit(str(e))
+
 			self.DAstate = False

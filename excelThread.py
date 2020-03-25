@@ -167,7 +167,8 @@ class excelThread(QThread):
 			try:
 				reportname = self.excel.SaveSheet(openFile)
 				self.sendReportName.emit(reportname)
-
+				
+			# error is sheet is opened by user and trying to save
 			except PermissionError as e:
 				self.sendOutput.emit("")
 				self.sendOutput.emit("FAILED: Please Close Opened Excel Sheet")
@@ -231,9 +232,11 @@ class excelThread(QThread):
 			try:
 				reportname = self.excel.SaveSheet(outputSheetName)
 				self.sendOutput.emit("")
-				self.sendOutput.emit("Data Analysis Successful: " + reportname)
+				self.sendOutput.emit("Data Analysis Successful!")
+				self.sendOutput.emit("Saved As: " + reportname)
 
-			except PermissionError as e:
+			# error is sheet is opened by user and trying to save
+			except PermissionError as e:	
 				self.sendOutput.emit("")
 				self.sendOutput.emit("FAILED: Please Close Opened Excel Sheet")
 				self.sendOutput.emit(str(e))

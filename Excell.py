@@ -2,11 +2,12 @@ from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, colors, PatternFill, Color, Font
 from openpyxl.styles.borders import Border, Side
 from openpyxl.utils.cell import coordinate_from_string, column_index_from_string, get_column_letter
+from openpyxl.chart import BarChart, Series, Reference
 import openpyxl
 import time
 import datetime
 import os
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QObject, QSize
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QObject, QSize, QFileInfo
 
 '''
 Class: Excel_Report
@@ -22,7 +23,7 @@ class Excel_Report(QObject):
 
     '''
     Function: __init__
-		  initializes when class is called
+		  initializes when class is called and set some excel attribute variables
     '''
     def __init__(self):
         self.thick_border = Side(border_style = "thick")
@@ -107,6 +108,7 @@ class Excel_Report(QObject):
 
     Parameters: 
 	  	Hrow         - row to enter header
+	  	Hcol         - col to enter header
 	  	title        - section  header title
     '''
     def addSingleHeader(self, Hrow, Hcol, title):
@@ -120,7 +122,7 @@ class Excel_Report(QObject):
 
     '''
     Function: addHeaderRow
-        Create excel sheet section heading
+        Create excel sheet section heading with title and list of title headings
 
     Parameters: 
 	  	Hrow         - row to enter header
@@ -213,6 +215,8 @@ class Excel_Report(QObject):
         self.reportExport = reportPath
         DAfileName =  self.reportExport + "/Data_Analysis_Results"
 
+        baseFolder = QFileInfo(reportPath)
+
         self.wb = openpyxl.Workbook()
         self.ws = self.wb.active
         self.ws.title = "Data Analysis"
@@ -222,7 +226,7 @@ class Excel_Report(QObject):
         DAHeader = self.ws.cell(row=1, column=1)
         DAHeader.fill =  self.fillColor
         DAHeader.font  =  self.largeFontStyle
-        DAHeader.value = "Data Analysis" 
+        DAHeader.value = "Data Analysis: " + baseFolder.baseName() 
         DAHeader.border = self.THICK 
         self.ws.cell(row=1, column=2).border = self.THICK 
         self.ws.cell(row=1, column=3).border = self.THICK 

@@ -35,3 +35,4 @@ test/
 /test/Saved_Sessions/outData.json
 
 /test/Saved_Sessions/outData.json
+/.vscode/launch.json

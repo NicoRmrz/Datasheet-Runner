@@ -202,26 +202,45 @@ class excelThread(QThread):
 				serNumList.append(reportDataList[i].get("Serial Number"))
 
 			# write header to data analysis
-			row = self.excel.addHeaderRow(row, 2, "DUTs", serNumList)
-			self.excel.addSingleHeader(row - 1, 1, "Tests")
-					
+			row = self.excel.addHeaderRow(row, 5, "DUTs", serNumList)
+			self.excel.addSingleHeader(row - 1, 4, "Unit")
+			self.excel.addSingleHeader(row - 1, 3, "Max")
+			self.excel.addSingleHeader(row - 1, 2, "Min")
+			self.excel.addSingleHeader(row - 1, 1, "Section")
+
 			# populate with report data
 			for test in range(0, numReports):
 				for i in range(0, numTests):
 					self.excel.writeExcelEntry(reportDataList[test]["Section"][i], row + i, 1)
-					self.excel.writeExcelEntry(reportDataList[test]["Value"][i], row + i, test + 2)
+					self.excel.writeExcelEntry(reportDataList[test]["Min"][i], row + i, 2)
+					self.excel.writeExcelEntry(reportDataList[test]["Max"][i], row + i, 3)
+					self.excel.writeExcelEntry(reportDataList[test]["Unit"][i], row + i, 4)
+					self.excel.writeExcelEntry(reportDataList[test]["Value"][i], row + i, 5 + test)
 
 					# color failed tests red
 					if (reportDataList[test]["Result"][i] == "F"):
-						self.excel.colorCellFail(row + i, test + 2)
+						self.excel.colorCellFail(row + i, 5 + test)
 
-					
+
+			# get value of each reports test and append to a list 
+			for test in range(0, numReports):
+				for i in range(0, numTests):
+					print(i)
+
+			nextCol = 5 + numReports
+		
+			# add in standard deviation
+			self.excel.addSingleHeader(row - 1, nextCol, "Standard Deviation")
+
+
 			# make bar graph
-			for i in range(0, numTests):
-				for test in range(0, numReports):
-					print("Test: " + str(test))
-					print("Result:  " + str(reportDataList[test]["Result"][i]))
-					print("Value:  " + str(reportDataList[test]["Value"][i]))
+			self.excel.createBarGraph(row, numTests)
+
+			# for i in range(0, numTests):
+			# 	for test in range(0, numReports):
+			# 		print("Test: " + str(test))
+			# 		print("Result:  " + str(reportDataList[test]["Result"][i]))
+			# 		print("Value:  " + str(reportDataList[test]["Value"][i]))
 
 			# save data analysis sheet/ emit error 
 			try:

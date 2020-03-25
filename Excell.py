@@ -36,6 +36,7 @@ class Excel_Report(QObject):
         self.boldFont = Font(size = "14",bold=True)
         self.fillColor = PatternFill(fgColor=Color('CDCDCD'), fill_type = "solid")
         self.centerAlignment = Alignment( horizontal='center', vertical='center', wrap_text=True)
+        self.alignRight = Alignment( horizontal='right', vertical='center', wrap_text=True)
 
     '''
     Function: startExcelSheet
@@ -136,9 +137,9 @@ class Excel_Report(QObject):
         # Create header title
         headerLen = len(headerList)
         if (Hcol == 1):
-            self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=headerLen)
+            self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=Hcol + headerLen)
         else:
-            self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=headerLen + 1)
+            self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=Hcol +headerLen -1)
 
         titleCell =  self.ws.cell(row=Hrow, column=Hcol)
         titleCell.value = title
@@ -195,21 +196,25 @@ class Excel_Report(QObject):
 	  	row - excel row to write to 
     '''
     def writeSignature(self, row):
-        # self.ws.merge_cells("A" + str(row) + ":" + "B" + str(row))
-        # self.ws.merge_cells("C" + str(row) + ":" + "D" + str(row))
-        # self.ws.merge_cells("E" + str(row) + ":" + "F" + str(row))
 
+        # write tester name
+        username = os.environ.get('USERNAME')
         self.ws.cell(row=row, column=1).value = "Tested By:"
-        self.ws.cell(row=row, column=2).value = "_______________________________"
+        self.ws.cell(row=row, column=1).alignment = self.alignRight
+        self.ws.cell(row=row, column=2).value = username
+        self.ws.cell(row=row, column=2).alignment = self.centerAlignment
+
+        # signature
         self.ws.cell(row=row, column=3).value = "Sign:"
-        self.ws.cell(row=row, column=4).value = "_______________________________"
+        self.ws.cell(row=row, column=3).alignment = self.alignRight
+        self.ws.cell(row=row, column=4).value = "________________________"
+
+        # write current date 
+        datestring = datetime.datetime.fromtimestamp(time.time()).strftime('%B %d, %Y')
         self.ws.cell(row=row, column=5).value = "Date:"
-        self.ws.cell(row=row, column=6).value = "_______________________________"
-
-        # Align cell
-        # self.ws.cell(row, 1).alignment = self.centerAlignment
-
-
+        self.ws.cell(row=row, column=5).alignment = self.alignRight
+        self.ws.cell(row=row, column=6).value = datestring
+        self.ws.cell(row=row, column=6).alignment = self.centerAlignment
 
     '''
     Function: colorCellFail
@@ -269,6 +274,9 @@ class Excel_Report(QObject):
     def parseReport(self, inputReport):
         resultDict ={}
         sectionList = []
+        minList = []
+        maxList = []
+        unitList = []
         valueList = []
         resultList = []
         serNum = ""
@@ -304,11 +312,17 @@ class Excel_Report(QObject):
         # iterate through each test sections and append to lists
         for row in range(firstRow, lastTestRow):
             sectionList.append(wsl.cell(row=row, column=1).value)
+            minList.append(wsl.cell(row=row, column=2).value)
+            maxList.append(wsl.cell(row=row, column=3).value)
+            unitList.append(wsl.cell(row=row, column=4).value)
             valueList.append(wsl.cell(row=row, column=5).value)
             resultList.append(wsl.cell(row=row, column=6).value)
  
         # add each list to dict
         resultDict["Section"] = sectionList
+        resultDict["Min"] = minList
+        resultDict["Max"] = maxList
+        resultDict["Unit"] = unitList
         resultDict["Value"] = valueList
         resultDict["Result"] = resultList
 
@@ -324,6 +338,38 @@ class Excel_Report(QObject):
     def getTimestamp(self):
         timestamp_return = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d_%H_%M_%S')
         return timestamp_return
+
+    '''
+    Function: createBarGraph
+		  Create bar graph of current data
+
+    Parameters: 
+	  	firstRow - first row of data
+	  	numTests - total number of tests
+    '''
+    def createBarGraph(self, firstRow, numTests):
+        lastCol =  self.ws.max_column
+        maxRow = numTests + firstRow - 1
+
+        print("Min: " + str(firstRow))
+        print("Max: " + str(maxRow))
+        
+        data = Reference(self.ws, min_col=2, min_row=firstRow - 1, max_row=maxRow + 1, max_col=4)
+        cats = Reference(self.ws, min_col=1, min_row=firstRow, max_row=maxRow)
+        print(data)
+        print(cats)
+
+        chart1 = BarChart()
+        chart1.type = "col"
+        chart1.style = 10
+        chart1.title = "Bar Chart"
+        chart1.y_axis.title = 'Test number'
+        chart1.x_axis.title = 'Sample length (mm)'
+        chart1.add_data(data, titles_from_data=True)
+
+        chart1.set_categories(cats)
+        chart1.shape = 4
+        self.ws.add_chart(chart1, "A10")
 
     '''
     Function: SaveSheet

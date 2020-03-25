@@ -225,8 +225,8 @@ class excelThread(QThread):
 			for i in range(0, numTests):
 				for test in range(0, numReports):
 					print("Test: " + str(test))
-					print( "Result:  " + reportDataList[test]["Result"][i])
-					print( "Value:  " + reportDataList[test]["Value"][i])
+					print("Result:  " + str(reportDataList[test]["Result"][i]))
+					print("Value:  " + str(reportDataList[test]["Value"][i]))
 
 			# save data analysis sheet/ emit error 
 			try:

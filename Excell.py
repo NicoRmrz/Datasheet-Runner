@@ -112,11 +112,15 @@ class Excel_Report(QObject):
     Return:
         next row
     '''
-    def addHeaderRow(self, Hrow, title, headerList):
+    def addHeaderRow(self, Hrow, Hcol, title, headerList):
         # Create header title
         headerLen = len(headerList)
-        self.ws.merge_cells(start_row=Hrow, start_column=1, end_row=Hrow, end_column=headerLen)
-        titleCell =  self.ws.cell(row=Hrow, column=1)
+        if (Hcol == 1):
+            self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=headerLen)
+        else:
+            self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=headerLen + 1)
+            
+        titleCell =  self.ws.cell(row=Hrow, column=Hcol)
         titleCell.value = title
         titleCell.font  =  self.boldFont
         titleCell.fill =  self.fillColor
@@ -126,7 +130,7 @@ class Excel_Report(QObject):
         Hrow += 1
 
         # write in header
-        headCol = 1
+        headCol = Hcol
         for i in headerList:
             self.ws.cell(row=Hrow, column=headCol).value = i
 
@@ -242,28 +246,15 @@ class Excel_Report(QObject):
 
         # find last row of test procedure section
         for row in range(firstRow, lastRow):
-            # print(wsl.cell(row=row, column=1).value)
-            
             
             # find first empty row (if signature is added on bottom)
-            # if (wsl.cell(row=row, column=1).value != None): 
-
             if (wsl.cell(row=row, column=1).value == None and foundLastRow == False):
                 lastTestRow = row 
                 foundLastRow = True
-
+            # else last row is end of table
             elif(lastTestRow == 0):
                 lastTestRow = lastRow +1
 
-
-            # elif(wsl.cell(row=row + 1, column=1).value != None):
-            #     lastTestRow = row
-
-            # else: # if there is no signature on bottom
-            #     lastTestRow = lastRow
-
-        print(lastRow, lastTestRow)
-                
         # iterate through each test sections and append to lists
         for row in range(firstRow, lastTestRow):
             sectionList.append(wsl.cell(row=row, column=1).value)

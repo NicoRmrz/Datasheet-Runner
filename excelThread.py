@@ -82,7 +82,7 @@ class excelThread(QThread):
 			if (len(self.datasheet_dict.get('Equipment')) > 0):
 				
 				# add header
-				row = self.excel.addHeaderRow(row, "Equipment", self.equipmentHeader)
+				row = self.excel.addHeaderRow(row, 1, "Equipment", self.equipmentHeader)
 
 				# add content
 				for i in self.datasheet_dict['Equipment']:
@@ -106,7 +106,7 @@ class excelThread(QThread):
 			if (len(self.datasheet_dict.get('Tools')) > 0):
 
 				# add header
-				row = self.excel.addHeaderRow(row, "Tools", self.toolHeader)
+				row = self.excel.addHeaderRow(row, 1, "Tools", self.toolHeader)
 
 				# add content
 				for i in self.datasheet_dict['Tools']:
@@ -120,7 +120,7 @@ class excelThread(QThread):
 			if (len(self.datasheet_dict.get('Material')) > 0):
 
 				# add header
-				row = self.excel.addHeaderRow(row, "Materials", self.materialHeader)
+				row = self.excel.addHeaderRow(row, 1, "Materials", self.materialHeader)
 
 				# add content
 				for i in self.datasheet_dict['Material']:
@@ -134,7 +134,7 @@ class excelThread(QThread):
 			row += 1
 
 			# write protocol header
-			row = self.excel.addHeaderRow(row, "Test Procedure", self.protocolHeader)
+			row = self.excel.addHeaderRow(row, 1, "Test Procedure", self.protocolHeader)
 
 			# populate excel report
 			for i in self.datasheet_dict["Procedure"]:
@@ -181,14 +181,24 @@ class excelThread(QThread):
 			# get base name to not parse
 			baseReportName = QFileInfo(outputSheetName)
 			
-			# iterate through each report
+			# iterate through each report and append result data dicts to a list
 			for report in reportList:
 				if (report.endswith('.xlsx') and report != baseReportName.baseName() + '.xlsx'):
 					inputReport = self.dataAnalyDIR + '/' + report
 					resultDict = self.excel.parseReport(inputReport)
 					reportDataList.append(resultDict)
 
-			print(reportDataList)
+			# add serial numbers in list for header
+			serNumList = []
+			row = 3
+			for i in range(0, len(reportDataList)):
+				serNumList.append(reportDataList[i].get("Serial Number"))
+
+			# write header to data analysis
+			row = self.excel.addHeaderRow(row, 2, "DUTs", serNumList)
+			print (row)
+
 			# save data analysis sheet
 			reportname = self.excel.SaveSheet(outputSheetName)
+			print(reportname)
 			self.DAstate = False

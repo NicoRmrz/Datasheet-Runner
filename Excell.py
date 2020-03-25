@@ -211,16 +211,48 @@ class Excel_Report(QObject):
         parse input report and retreive all data
 
     Parameters: 
-	  	inputReport - input report to parse data
+	  	inputReport - input report to parse data5
     
     Returns: 
 	  	resultDict - dictionary of results from report
+        serNum     - serial number of DUT
     '''
     def parseReport(self, inputReport):
-        print(inputReport)
-        resultDict =[]
+        resultDict ={}
+        serNum = ""
+        sectionList = []
+        lastTestRow = 0
+        firstRow = 0
 
-        return resultDict
+        wb = load_workbook(filename = inputReport)
+        wsl = wb.active
+        serNum = wsl.cell(row=2, column=2).value # get serial number from sheet
+        lastRow = wsl.max_row  # get last row of report
+        print(inputReport)
+
+        # first find procedure header row
+        for row in range(1, lastRow):
+            if (wsl.cell(row=row, column=1).value == "Section"):
+
+                # get first row
+                firstRow = row + 1
+
+                # find last row of test procedure section
+                for row in range(firstRow, lastRow):
+
+                    #find first empty row
+                    if (wsl.cell(row=row, column=1).value == ""):
+                        lastTestRow = row -1
+                    else:   # else nothing past last table so final row is end of table
+                        lastTestRow = lastRow
+
+        # iterate through each test sections
+        for row in range(firstRow, lastTestRow):
+            print(wsl.cell(row=row, column=1).value)
+            print(wsl.cell(row=row, column=5).value)
+            print(wsl.cell(row=row, column=6).value)
+ 
+        return resultDict, serNum
 
     '''
     Function: getTimestamp

@@ -176,7 +176,8 @@ class excelThread(QThread):
 			for report in reportList:
 				if (report.endswith('.xlsx') and report != baseReportName.baseName() + '.xlsx'):
 					inputReport = self.dataAnalyDIR + '/' + report
-					resultDict = self.excel.parseReport(inputReport)
+					resultDict, reportSerNum = self.excel.parseReport(inputReport)
+					# print(reportSerNum)
 
 			# save data analysis sheet
 			reportname = self.excel.SaveSheet(outputSheetName)

@@ -308,8 +308,8 @@ class Excel_Report(QObject):
                      
         for col, value in dims.items():
             # print (str(col) + ", " + str(value))
-            self.ws.column_dimensions[col].width = value+3
-            # self.ws.column_dimensions[get_column_letter(col)].width = value+3
+            # self.ws.column_dimensions[col].width = value+3
+            self.ws.column_dimensions[get_column_letter(col)].width = value+3
 
         #Timestamps the file
         # gettime = self.getTimestamp()

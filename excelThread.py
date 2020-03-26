@@ -227,6 +227,8 @@ class excelThread(QThread):
 				for i in range(0, numTests):
 					print(i)
 
+					
+
 			nextCol = 5 + numReports
 		
 			# add in standard deviation
@@ -234,7 +236,7 @@ class excelThread(QThread):
 
 
 			# make bar graph
-			self.excel.createBarGraph(row, numTests)
+			self.excel.createBarGraph(row, numTests, nextCol)
 
 			# for i in range(0, numTests):
 			# 	for test in range(0, numReports):

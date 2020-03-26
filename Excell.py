@@ -346,29 +346,32 @@ class Excel_Report(QObject):
     Parameters: 
 	  	firstRow - first row of data
 	  	numTests - total number of tests
+        col - standard deivation column
     '''
-    def createBarGraph(self, firstRow, numTests):
+    def createBarGraph(self, firstRow, numTests, col):
         lastCol =  self.ws.max_column
         maxRow = numTests + firstRow - 1
 
         print("Min: " + str(firstRow))
         print("Max: " + str(maxRow))
+        print("SD column: " + str(col))
         
         data = Reference(self.ws, min_col=2, min_row=firstRow - 1, max_row=maxRow + 1, max_col=4)
-        cats = Reference(self.ws, min_col=1, min_row=firstRow, max_row=maxRow)
+        cats = Reference(self.ws, min_col=col, min_row=firstRow, max_row=maxRow)
         print(data)
         print(cats)
 
         chart1 = BarChart()
         chart1.type = "col"
         chart1.style = 10
-        chart1.title = "Bar Chart"
+        chart1.title = "Standard Deviation"
         chart1.y_axis.title = 'Test number'
         chart1.x_axis.title = 'Sample length (mm)'
         chart1.add_data(data, titles_from_data=True)
 
         chart1.set_categories(cats)
-        chart1.shape = 4
+        chart1.shape = 11
+        # chart1.shape = 4
         self.ws.add_chart(chart1, "A10")
 
     '''

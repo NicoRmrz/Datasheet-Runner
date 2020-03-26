@@ -340,6 +340,35 @@ class Excel_Report(QObject):
         return timestamp_return
 
     '''
+    Function: getTestDataList
+        Get data per each test in data analysis and return list of test data
+
+    Parameters: 
+	  	numTests    - number of total tests
+	  	numReports  - total number of samples
+        rowStart    - first row to start parsing data
+        colStart    - first col to start parsing data
+
+    Returns: 
+	  	outputList - list of data value lists
+    '''
+    def getTestDataList(self, numTests, numReports, rowStart, colStart):
+        print(rowStart)
+        print(colStart)
+        outputList = []
+        for i in range(0, numTests):
+
+            dataList = []
+            for test in range(0, numReports):
+                dataList.append(test)
+
+            outputList.append(dataList)
+
+                
+        
+        return outputList
+
+    '''
     Function: createBarGraph
 		  Create bar graph of current data
 
@@ -352,14 +381,14 @@ class Excel_Report(QObject):
         lastCol =  self.ws.max_column
         maxRow = numTests + firstRow - 1
 
-        print("Min: " + str(firstRow))
-        print("Max: " + str(maxRow))
-        print("SD column: " + str(col))
+        # print("Min: " + str(firstRow))
+        # print("Max: " + str(maxRow))
+        # print("SD column: " + str(col))
         
         data = Reference(self.ws, min_col=2, min_row=firstRow - 1, max_row=maxRow + 1, max_col=4)
         cats = Reference(self.ws, min_col=col, min_row=firstRow, max_row=maxRow)
-        print(data)
-        print(cats)
+        # print(data)
+        # print(cats)
 
         chart1 = BarChart()
         chart1.type = "col"
@@ -394,8 +423,8 @@ class Excel_Report(QObject):
                      
         for col, value in dims.items():
             # print (str(col) + ", " + str(value))
-            self.ws.column_dimensions[col].width = value+3
-            # self.ws.column_dimensions[get_column_letter(col)].width = value+3
+            # self.ws.column_dimensions[col].width = value+3
+            self.ws.column_dimensions[get_column_letter(col)].width = value+3
 
         #Timestamps the file
         # gettime = self.getTimestamp()

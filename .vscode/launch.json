@@ -10,7 +10,7 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "C:/Git Projects/datasheet-runner/main.py",
+            "program": "C:/Users/nicor/Desktop/Git Projects/Datasheet-Runner/main.py",
             "console": "integratedTerminal"
         }
     ]

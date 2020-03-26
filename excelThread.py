@@ -194,6 +194,7 @@ class excelThread(QThread):
 			# declare local variable for populating data analysis
 			serNumList = []
 			row = 3
+			colData = 5
 			numTests = len(reportDataList[0]["Section"])
 			numReports = len(reportDataList)
 
@@ -202,7 +203,7 @@ class excelThread(QThread):
 				serNumList.append(reportDataList[i].get("Serial Number"))
 
 			# write header to data analysis
-			row = self.excel.addHeaderRow(row, 5, "DUTs", serNumList)
+			row = self.excel.addHeaderRow(row, colData, "DUTs", serNumList)
 			self.excel.addSingleHeader(row - 1, 4, "Unit")
 			self.excel.addSingleHeader(row - 1, 3, "Max")
 			self.excel.addSingleHeader(row - 1, 2, "Min")
@@ -215,19 +216,16 @@ class excelThread(QThread):
 					self.excel.writeExcelEntry(reportDataList[test]["Min"][i], row + i, 2)
 					self.excel.writeExcelEntry(reportDataList[test]["Max"][i], row + i, 3)
 					self.excel.writeExcelEntry(reportDataList[test]["Unit"][i], row + i, 4)
-					self.excel.writeExcelEntry(reportDataList[test]["Value"][i], row + i, 5 + test)
+					self.excel.writeExcelEntry(reportDataList[test]["Value"][i], row + i, colData + test)
 
 					# color failed tests red
 					if (reportDataList[test]["Result"][i] == "F"):
-						self.excel.colorCellFail(row + i, 5 + test)
+						self.excel.colorCellFail(row + i, colData + test)
 
 
-			# get value of each reports test and append to a list 
-			for test in range(0, numReports):
-				for i in range(0, numTests):
-					print(i)
-
-					
+			# get list of values of each test of all reports
+			testDataList = self.excel.getTestDataList(numTests, numReports, row, colData)
+			print(testDataList)
 
 			nextCol = 5 + numReports
 		

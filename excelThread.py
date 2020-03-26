@@ -261,6 +261,7 @@ class excelThread(QThread):
 			# get standard deviation column
 			stanDevData = self.excel.getDataColumn(numTests, row, stanDevCol)
 
+
 			print(stanDevData)
 
 

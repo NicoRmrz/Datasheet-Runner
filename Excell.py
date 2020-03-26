@@ -390,17 +390,17 @@ class Excel_Report(QObject):
         Return column data in list
 
     Parameters: 
-	  	numTests  - total number of tests
+	  	length      - length of column
         rowStart    - first row to start parsing data
         colStart    - first col to start parsing data
 
     Returns: 
 	  	columnList - List of all values from each test from all samples
     '''
-    def getDataColumn(self, numTests, rowStart, colStart):
+    def getDataColumn(self, length, rowStart, colStart):
         columnList = []
 
-        for test in range(0, numTests):
+        for test in range(0, length):
             value = self.ws.cell(row=rowStart + test, column=colStart).value
 
             if (value != 'N/A'):
@@ -414,12 +414,12 @@ class Excel_Report(QObject):
 
     Parameters: 
 	  	firstRow - first row of data
-	  	numTests - total number of tests
+	  	length - length of data
         col - column of data to graph
     '''
-    def createBarGraph(self, firstRow, numTests, col):
+    def createBarGraph(self, firstRow, length, col):
         lastCol =  self.ws.max_column
-        maxRow = numTests + firstRow - 1
+        maxRow = length + firstRow - 1
 
         # print("Min: " + str(firstRow))
         # print("Max: " + str(maxRow))

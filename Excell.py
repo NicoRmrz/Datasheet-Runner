@@ -7,7 +7,7 @@ import openpyxl
 import time
 import datetime
 import os
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QObject, QSize, QFileInfo
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QObject, QSize, QFileInfo, QRegularExpression
 
 '''
 Class: Excel_Report
@@ -53,6 +53,7 @@ class Excel_Report(QObject):
     '''
     def startExcelSheet(self, exportPath, name, serialNum, Protocol):
         self.path = exportPath + name+ "/"
+        print(serialNum)
 
         #Create test folder path in report folder
         if not os.path.exists(self.path):
@@ -136,10 +137,11 @@ class Excel_Report(QObject):
     def addHeaderRow(self, Hrow, Hcol, title, headerList):
         # Create header title
         headerLen = len(headerList)
+
         if (Hcol == 1):
-            self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=Hcol + headerLen)
+            self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=Hcol + headerLen - 1)
         else:
-            self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=Hcol +headerLen -1)
+            self.ws.merge_cells(start_row=Hrow, start_column=Hcol, end_row=Hrow, end_column=Hcol + headerLen - 1)
 
         titleCell =  self.ws.cell(row=Hrow, column=Hcol)
         titleCell.value = title
@@ -341,7 +343,8 @@ class Excel_Report(QObject):
 
     '''
     Function: getTestDataList
-        Get data per each test in data analysis and return list of test data
+        Iterate populated Data Analysis excel worksheet.
+        Append all tests with values into a list and return value in list
 
     Parameters: 
 	  	numTests    - number of total tests
@@ -350,23 +353,60 @@ class Excel_Report(QObject):
         colStart    - first col to start parsing data
 
     Returns: 
-	  	outputList - list of data value lists
+	  	outputList - List of all values from each test from all samples
     '''
     def getTestDataList(self, numTests, numReports, rowStart, colStart):
-        print(rowStart)
-        print(colStart)
-        outputList = []
-        for i in range(0, numTests):
 
-            dataList = []
-            for test in range(0, numReports):
-                dataList.append(test)
+        outputList = [] 
 
+        #  set reguar expression value to 
+        isHex = QRegularExpression("0x+[0-9a-f]", QRegularExpression.CaseInsensitiveOption) # hex number
+
+        # append all tests with values
+        for test in range(0, numTests):
+           
+            dataList = [] 
+            # append data from all reports
+            for report in range(0, numReports):
+
+                value = self.ws.cell(row=rowStart + test, column= colStart + report).value
+                if (value != 'N/A' and value != None):
+
+                    # check base and convert to int
+                    if (isHex.match(str(value)).hasMatch()): 
+                        value = int(value, 16)    # convert hex val to int
+                    else:
+                        value = float(value)
+
+                dataList.append(value)
+
+            # append to test list
             outputList.append(dataList)
-
-                
-        
         return outputList
+
+    '''
+    Function: getDataColumn
+        Gets list of column with data anlysis
+        Return column data in list
+
+    Parameters: 
+	  	numTests  - total number of tests
+        rowStart    - first row to start parsing data
+        colStart    - first col to start parsing data
+
+    Returns: 
+	  	columnList - List of all values from each test from all samples
+    '''
+    def getDataColumn(self, numTests, rowStart, colStart):
+        columnList = []
+
+        for test in range(0, numTests):
+            value = self.ws.cell(row=rowStart + test, column=colStart).value
+
+            if (value != 'N/A'):
+                columnList.append(value)
+       
+        return columnList
 
     '''
     Function: createBarGraph
@@ -375,7 +415,7 @@ class Excel_Report(QObject):
     Parameters: 
 	  	firstRow - first row of data
 	  	numTests - total number of tests
-        col - standard deivation column
+        col - column of data to graph
     '''
     def createBarGraph(self, firstRow, numTests, col):
         lastCol =  self.ws.max_column
@@ -405,13 +445,13 @@ class Excel_Report(QObject):
 
     '''
     Function: SaveSheet
-		  To save excel report with timestamp
+        To save excel sheet
 
     Parameters: 
-	  	fileToSave - open file to save
+	  	fileToSave - chosen file to save
 
     Returns: 
-	  	Final_Report_Name - report name to display on UI
+	  	Final_Report_Name - saved report name to display on UI
     '''
     def SaveSheet(self, fileToSave):
         # To Auto Fit column width

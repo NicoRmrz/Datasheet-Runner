@@ -1,6 +1,7 @@
 import os
 from PyQt5.QtGui import QImage
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot, QFile, QDate, QDir, QFileInfo
+import statistics 
 
 from Excell import Excel_Report
 
@@ -194,7 +195,7 @@ class excelThread(QThread):
 			# declare local variable for populating data analysis
 			serNumList = []
 			row = 3
-			colData = 5
+			dataCol = 5
 			numTests = len(reportDataList[0]["Section"])
 			numReports = len(reportDataList)
 
@@ -203,7 +204,7 @@ class excelThread(QThread):
 				serNumList.append(reportDataList[i].get("Serial Number"))
 
 			# write header to data analysis
-			row = self.excel.addHeaderRow(row, colData, "DUTs", serNumList)
+			row = self.excel.addHeaderRow(row, dataCol, "Serial Numbers", serNumList)
 			self.excel.addSingleHeader(row - 1, 4, "Unit")
 			self.excel.addSingleHeader(row - 1, 3, "Max")
 			self.excel.addSingleHeader(row - 1, 2, "Min")
@@ -216,25 +217,56 @@ class excelThread(QThread):
 					self.excel.writeExcelEntry(reportDataList[test]["Min"][i], row + i, 2)
 					self.excel.writeExcelEntry(reportDataList[test]["Max"][i], row + i, 3)
 					self.excel.writeExcelEntry(reportDataList[test]["Unit"][i], row + i, 4)
-					self.excel.writeExcelEntry(reportDataList[test]["Value"][i], row + i, colData + test)
+					self.excel.writeExcelEntry(reportDataList[test]["Value"][i], row + i, dataCol + test)
 
 					# color failed tests red
 					if (reportDataList[test]["Result"][i] == "F"):
-						self.excel.colorCellFail(row + i, colData + test)
+						self.excel.colorCellFail(row + i, dataCol + test)
+
+			# add in Data Analysis columns
+			stanDevCol 	= dataCol + numReports
+			minCol 		= dataCol + numReports + 1
+			maxCol		= dataCol + numReports + 2
+			headerRow 	= row - 1
+			currRow		= row
+			testIndex 	= 0
+
+			self.excel.addSingleHeader(headerRow, stanDevCol, "Standard Deviation")
+			self.excel.addSingleHeader(headerRow, minCol, "Min")
+			self.excel.addSingleHeader(headerRow, maxCol, "Max")
+
+			# iterate all tests and get list of values of each test
+			testDataList = self.excel.getTestDataList(numTests, numReports, currRow, dataCol)
+
+			# perform analysis
+			for test in testDataList:
+
+				if ('N/A' in test):
+					self.excel.writeExcelEntry("N/A", currRow, stanDevCol)
+					self.excel.writeExcelEntry("N/A", currRow, minCol)
+					self.excel.writeExcelEntry("N/A", currRow, maxCol)
+
+				else:
+					standardDeviation = statistics.stdev(testDataList[testIndex])
+					minimumVal = min(testDataList[testIndex])
+					maximumVal = max(testDataList[testIndex])
+					self.excel.writeExcelEntry(standardDeviation, currRow, stanDevCol)
+					self.excel.writeExcelEntry(minimumVal, currRow, minCol)
+					self.excel.writeExcelEntry(maximumVal, currRow, maxCol)
+
+				# increment current row and test index
+				currRow += 1 
+				testIndex += 1
+
+			# get standard deviation column
+			stanDevData = self.excel.getDataColumn(numTests, row, stanDevCol)
+
+			print(stanDevData)
 
 
-			# get list of values of each test of all reports
-			testDataList = self.excel.getTestDataList(numTests, numReports, row, colData)
-			print(testDataList)
 
-			nextCol = 5 + numReports
-		
-			# add in standard deviation
-			self.excel.addSingleHeader(row - 1, nextCol, "Standard Deviation")
-
-
-			# make bar graph
-			self.excel.createBarGraph(row, numTests, nextCol)
+			# make bar graph --- UPDATE FUNCTION
+			self.excel.createBarGraph(row, numTests, stanDevCol)
 
 			# for i in range(0, numTests):
 			# 	for test in range(0, numReports):
